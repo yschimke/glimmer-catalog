@@ -1,0 +1,34 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "github>yschimke/renovate-config",
+    ":dependencyDashboard",
+    ":semanticCommits"
+  ],
+  "timezone": "UTC",
+  "prConcurrentLimit": 10,
+  "packageRules": [
+    {
+      "description": "Glimmer changes the rendered catalog and the CMP source pin; review it as one visual update.",
+      "matchPackageNames": ["/^androidx\\.xr\\.glimmer:/"],
+      "groupName": "Glimmer",
+      "automerge": false
+    },
+    {
+      "description": "The AndroidX Compose artifacts match Glimmer's published dependency line and do not move independently.",
+      "matchPackageNames": ["/^androidx\\.compose\\./"],
+      "enabled": false
+    },
+    {
+      "description": "Compose Multiplatform changes the local fork's rendering and requires visual review.",
+      "matchPackageNames": ["/^org\\.jetbrains\\.compose/"],
+      "groupName": "Compose Multiplatform",
+      "automerge": false
+    },
+    {
+      "description": "The compose-ai-tools Gradle plugin and runtime artifacts move together.",
+      "matchPackageNames": ["ee.schimke.composeai.preview", "/^ee\\.schimke\\.composeai:/"],
+      "groupName": "compose-preview"
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+name: Design Artifacts
+
+# Publishes both sheets to yschimke/glimmer-catalog-out through compose-ai-tools' reusable workflow:
+# `design-artifacts/glimmer-catalog` (the basic-catalog stickers) and `design-artifacts/glimmer-samples`
+# (the AndroidX sample screens). preview.coo.ee serves each delivery branch as a catalog.
+#
+# Both are Android sheets: `desktop-render: false` routes them to the Robolectric lane, the only one
+# the Glimmer AARs can be put on (see catalog/build.gradle.kts).
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Mondays 06:00 UTC
+  push:
+    branches: [main]
+    paths:
+      - 'catalog/**'
+      - 'ui-builder.policy.json'
+      - 'samples-catalog/**'
+      - 'design-map.json'
+      - 'design-map-variants.json'
+      - 'figma-kit-index.json'
+      - 'design-pages.json'
+      - 'design/pages/**'
+      - 'scripts/design-map.sh'
+      - 'gradle/**'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - 'gradle.properties'
+      - '.github/workflows/design-artifacts.yml'
+  workflow_dispatch:
+    inputs:
+      allow_incomplete:
+        description: Publish even when some previews fail to render
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  ui-builder-contract:
+    name: Released plugin discovers the UI Builder palette
+    if: ${{ github.repository == 'yschimke/glimmer-catalog' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: ./.github/actions/setup
+        with:
+          cache-read-only: 'true'
+      - name: Install Android 37.0
+        run: sdkmanager 'platforms;android-37.0'
+      - name: Verify the published discovery plugin
+        run: |
+          ./gradlew :catalog:composePreviewDiscover --stacktrace
+          node scripts/check-ui-builder.mjs
+
+  glimmer-catalog:
+    name: glimmer-catalog
+    if: ${{ github.repository == 'yschimke/glimmer-catalog' }}
+    needs: ui-builder-contract
+    permissions:
+      contents: write
+    concurrency:
+      group: design-artifacts-${{ github.ref }}-glimmer-catalog
+      cancel-in-progress: false
+    uses: yschimke/compose-ai-tools/.github/workflows/design-artifacts-reusable.yml@main
+    with:
+      system: glimmer-catalog
+      artifact-repository: yschimke/glimmer-catalog-out
+      spec: catalog.spec.json
+      module: ':catalog'
+      # The design map is projected from the annotations by the reusable workflow's own default;
+      # every `reference` names a node of the Glimmer UI kit.
+      reference-cache-branch: design-parity/reference
+      cli-version: catalog
+      catalog-key: composePreviewPlugin
+      desktop-render: false
+      publish-live-bundle: true
+      defer-figma-svg: false
+      split-per-preview: false
+      commit-user-name: Yuri Schimke
+      commit-user-email: yuri@schimke.ee
+      timeout-minutes: 60
+      render-timeout: 1800
+      render-shards: 1
+      allow-incomplete: ${{ github.event_name == 'workflow_dispatch' && inputs.allow_incomplete }}
+    secrets:
+      artifacts_token: ${{ secrets.ARTIFACTS_TOKEN }}
+      figma_token: ${{ secrets.FIGMA_TOKEN }}
+
+  glimmer-samples:
+    name: glimmer-samples
+    if: ${{ github.repository == 'yschimke/glimmer-catalog' }}
+    needs: ui-builder-contract
+    permissions:
+      contents: write
+    concurrency:
+      group: design-artifacts-${{ github.ref }}-glimmer-samples
+      cancel-in-progress: false
+    uses: yschimke/compose-ai-tools/.github/workflows/design-artifacts-reusable.yml@main
+    with:
+      system: glimmer-samples
+      artifact-repository: yschimke/glimmer-catalog-out
+      spec: samples-catalog/catalog.spec.json
+      module: ':samples-catalog'
+      design-map-command: printf '{"components":[]}\n' > design-map.json
+      cli-version: catalog
+      catalog-key: composePreviewPlugin
+      desktop-render: false
+      publish-live-bundle: true
+      split-per-preview: false
+      commit-user-name: Yuri Schimke
+      commit-user-email: yuri@schimke.ee
+      timeout-minutes: 60
+      render-timeout: 1800
+      render-shards: 1
+      allow-incomplete: ${{ github.event_name == 'workflow_dispatch' && inputs.allow_incomplete }}
+    secrets:
+      artifacts_token: ${{ secrets.ARTIFACTS_TOKEN }}

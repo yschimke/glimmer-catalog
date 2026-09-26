@@ -1,0 +1,549 @@
+// The pure half of `import-figma-pages.mjs`: which pages an import covers, and what each one is
+// called on the way out. Both answers are URLs — `/{system}/pages/{id}` — so they are worth pinning
+// rather than discovering from a diff after the fact.
+
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import test from "node:test";
+
+import {
+  collectNodes,
+  findRequiredBackplates,
+  indexDesignMap,
+  limitNodes,
+  linkNode,
+  normalizeExclusions,
+  pruneSvgNodes,
+  resolvePages,
+  slugForPage,
+  stalePageSvgNames,
+} from "./import-figma-pages.mjs";
+
+const page = (nodeId, name) => ({ nodeId, name });
+const root = new URL("../", import.meta.url);
+
+test("slugs a page name into a route-safe id", () => {
+  assert.equal(slugForPage("Shape", "58548:7093"), "shape");
+  assert.equal(slugForPage("Date & time pickers", "55141:14175"), "date-time-pickers");
+  assert.equal(slugForPage("Table of contents", "55879:3580"), "table-of-contents");
+});
+
+test("falls back to the node id when a name slugs to nothing usable", () => {
+  assert.equal(slugForPage("—", "55141:14176"), "55141-14176");
+  assert.equal(slugForPage("", "55141:14176"), "55141-14176");
+  // `.svg` is the export route, and `.`/`..` are path segments — a page id may be none of them.
+  assert.equal(slugForPage("shape.svg", "58548:7093"), "shape-svg");
+  assert.equal(slugForPage("..", "1:2"), "1-2");
+});
+
+test("discovers every page in the file, in document order", () => {
+  assert.deepEqual(
+    resolvePages({
+      discovered: [page("11:1833", "Getting started"), page("55141:14175", "Date & time pickers")],
+    }),
+    [
+      { id: "getting-started", nodeId: "11:1833", name: "Getting started" },
+      { id: "date-time-pickers", nodeId: "55141:14175", name: "Date & time pickers" },
+    ],
+  );
+});
+
+test("a pin fixes the id of its node, wherever discovery finds it", () => {
+  const resolved = resolvePages({
+    pins: [{ id: "shape", nodeId: "58548:7093", name: "Shape" }],
+    discovered: [page("11:1833", "Getting started"), page("58548:7093", "Shape v2")],
+  });
+  // The published URL stays `shape` even though the designer renamed the tab; the *name* follows
+  // the file, because that is what the index reads.
+  assert.deepEqual(resolved[1], {
+    id: "shape",
+    nodeId: "58548:7093",
+    name: "Shape",
+    // Pinned: a human named this page, so its failure is fatal where a discovered page's is a skip.
+    pinned: true,
+  });
+});
+
+test("a pin whose node the file does not carry is still imported", () => {
+  assert.deepEqual(resolvePages({ pins: [{ id: "shape", nodeId: "58548-7093" }] }), [
+    { id: "shape", nodeId: "58548:7093", name: "shape", pinned: true },
+  ]);
+});
+
+test("a pin carries descendant exclusions into the import", () => {
+  assert.deepEqual(
+    resolvePages({
+      pins: [{ id: "buttons", nodeId: "1:1", excludeNodes: ["1:2"] }],
+    }),
+    [
+      {
+        id: "buttons",
+        nodeId: "1:1",
+        name: "buttons",
+        pinned: true,
+        excludeNodes: ["1:2"],
+      },
+    ],
+  );
+});
+
+test("a full refresh identifies SVGs removed from the resolved page inventory", () => {
+  assert.deepEqual(
+    stalePageSvgNames(
+      ["pages.json", "about.svg", "component-card.svg", "notes.txt"],
+      ["about"],
+    ),
+    ["component-card.svg"],
+  );
+});
+
+test("two pages sharing a name both survive, the first keeping the bare slug", () => {
+  assert.deepEqual(
+    resolvePages({ discovered: [page("1:1", "Buttons"), page("2:2", "Buttons")] }).map((p) => p.id),
+    ["buttons", "buttons-2"],
+  );
+});
+
+test("a discovered page never steals a pinned id", () => {
+  assert.deepEqual(
+    resolvePages({
+      pins: [{ id: "shape", nodeId: "9:9" }],
+      discovered: [page("1:1", "Shape"), page("9:9", "Shape set")],
+    }).map((p) => p.id),
+    ["shape-2", "shape"],
+  );
+});
+
+test("excludes by node id or by name, case-insensitively", () => {
+  const discovered = [page("55594:2480", "Examples"), page("58548:7093", "Shape")];
+  assert.deepEqual(
+    resolvePages({ discovered, exclude: ["55594:2480"] }).map((p) => p.id),
+    ["shape"],
+  );
+  assert.deepEqual(
+    resolvePages({ discovered, exclude: ["examples"] }).map((p) => p.id),
+    ["shape"],
+  );
+  // A pin is not a licence to import: excluding its node drops it too.
+  assert.deepEqual(
+    resolvePages({
+      pins: [{ id: "shape", nodeId: "58548:7093", name: "Shape" }],
+      discovered,
+      exclude: ["Shape"],
+    }).map((p) => p.id),
+    ["examples"],
+  );
+});
+
+test("prunes excluded SVG subtrees and definitions reachable only from them", () => {
+  const source = `<svg viewBox="0 0 10 10">
+<g data-node-id="1:1"><rect fill="url(#background)"/></g>
+<g data-node-id="2:2"><use href="#foreground"/></g>
+<defs><pattern id="background"><image href="#photo"/></pattern><image id="photo" href="data:image/png;base64,large"/><path id="foreground" d="M0 0h1v1z"/></defs>
+</svg>`;
+  const result = pruneSvgNodes(source, ["1:1"]);
+
+  assert.equal(result.removed, 1);
+  assert.doesNotMatch(result.svg, /1:1|background|photo|base64/);
+  assert.match(result.svg, /2:2|foreground/);
+  assert.match(result.svg, /viewBox="0 0 10 10"/);
+});
+
+test("prunes a self-closing excluded SVG node", () => {
+  const result = pruneSvgNodes(
+    `<svg><rect data-node-id="1:1"/><path data-node-id="2:2"/></svg>`,
+    ["1:1"],
+  );
+  assert.equal(result.removed, 1);
+  assert.equal(result.svg, `<svg><path data-node-id="2:2"/></svg>`);
+});
+
+test("matches a configured component id at the end of an instance path", () => {
+  const result = pruneSvgNodes(
+    `<svg><g data-node-id="I9:9;1:1"><path/></g><path data-node-id="2:2"/></svg>`,
+    ["1:1"],
+  );
+  assert.equal(result.removed, 1);
+  assert.equal(result.svg, `<svg><path data-node-id="2:2"/></svg>`);
+});
+
+// The node walk. Shaped after the kit's real `Switch` sheet, which is what showed the bug: a
+// component set of variants, each variant carrying an `Icon` instance and the focused ones a
+// `Focus indicator`, none of which a `design-map.json` reference can name.
+const set = (id, name, children) => ({ id, name, type: "COMPONENT_SET", children });
+const variant = (id, name, children = []) => ({ id, name, type: "COMPONENT", children });
+const instance = (id, name, children = []) => ({ id, name, type: "INSTANCE", children });
+const frame = (children) => ({ id: "0:1", name: "Switch", type: "CANVAS", children });
+
+test("walks a component set's variants but never a variant's insides", () => {
+  const page = frame([
+    set("1:1", "Switch", [
+      variant("1:2", "Selected=True, State=Enabled, Icon=True", [
+        instance("1:3", "Icon", [{ id: "1:4", name: "vector", type: "VECTOR" }]),
+      ]),
+      variant("1:5", "Selected=True, State=Focused, Icon=False", [
+        instance("1:6", "Focus indicator"),
+      ]),
+    ]),
+    instance("1:7", "Header"),
+  ]);
+  assert.deepEqual(
+    collectNodes(page).map((n) => [n.nodeId, n.name, n.depth]),
+    [
+      ["1:1", "Switch", 1],
+      ["1:2", "Selected=True, State=Enabled, Icon=True", 2],
+      ["1:5", "Selected=True, State=Focused, Icon=False", 2],
+      ["1:7", "Header", 1],
+    ],
+  );
+  // Each node carries its own type, which is how the consumer tells the container from the
+  // components inside it without inferring containment from nesting depth.
+  assert.deepEqual(
+    collectNodes(page).map((n) => n.type),
+    ["COMPONENT_SET", "COMPONENT", "COMPONENT", "INSTANCE"],
+  );
+});
+
+test("the node manifest omits an excluded subtree", () => {
+  const page = frame([
+    set("1:1", "Background", [variant("1:2", "Decoration")]),
+    set("2:1", "Button", [variant("2:2", "Enabled")]),
+  ]);
+  assert.deepEqual(
+    collectNodes(page, { excludedNodeIds: new Set(["1:1"]) }).map((node) => node.nodeId),
+    ["2:1", "2:2"],
+  );
+});
+
+test("finds a set however deeply the sheet nests it, and dashes its ids", () => {
+  const row = { id: "2:0", name: "row", type: "FRAME" };
+  const page = frame([{ ...row, children: [set("2-1", "Switch", [variant("2-2", "A")])] }]);
+  assert.deepEqual(
+    collectNodes(page).map((n) => n.nodeId),
+    ["2:1", "2:2"],
+  );
+});
+
+test("an indexed set is public inventory and an unindexed construction set is not", () => {
+  const page = frame([
+    set("1:1", "List item/List Item: -4 Density (baseline)", [
+      variant("1:2", "Condition=1 line"),
+    ]),
+    set("2:1", "List", [variant("2:2", "Type=Standard, Multi-line=False")]),
+  ]);
+  const nodes = collectNodes(page, {
+    publicSetIds: new Set(["2:1"]),
+    mappedIds: new Set(),
+  });
+
+  assert.deepEqual(
+    nodes.map((node) => [node.nodeId, node.inventory]),
+    [
+      ["1:1", false],
+      ["1:2", false],
+      ["2:1", undefined],
+      ["2:2", undefined],
+    ],
+  );
+});
+
+test("a mapped descendant makes its whole unindexed set public", () => {
+  const page = frame([
+    set("3:1", "Horizontal divider", [
+      variant("3:2", "Inset=False"),
+      variant("3:3", "Inset=True"),
+    ]),
+  ]);
+  const nodes = collectNodes(page, {
+    publicSetIds: new Set(),
+    mappedIds: new Set(["3:2"]),
+  });
+
+  assert.deepEqual(nodes.map((node) => node.inventory), [undefined, undefined, undefined]);
+});
+
+test("refuses a pin the server would refuse", () => {
+  assert.throws(() => resolvePages({ pins: [{ id: "shape.svg", nodeId: "1:1" }] }), /refuse/);
+  assert.throws(() => resolvePages({ pins: [{ id: "..", nodeId: "1:1" }] }), /refuse/);
+  assert.throws(() => resolvePages({ pins: [{ id: "a/b", nodeId: "1:1" }] }), /refuse/);
+  assert.throws(() => resolvePages({ pins: [{ id: "shape" }] }), /nodeId/);
+  assert.throws(
+    () => resolvePages({ pins: [{ id: "a", nodeId: "1:1" }, { id: "b", nodeId: "1-1" }] }),
+    /twice/,
+  );
+});
+
+// The design-map join. Every failure here is quiet — a ref paired with the wrong preview still
+// renders something, so a page of 35 identical silhouettes looks exactly like a page that works.
+
+const ref = (id) => `figma:AbCdEf/${id}`;
+const preview = (name) => `com.example.ShapesKt.${name}`;
+
+test("pairs each ref with the preview of the same variant, whatever slot it was tagged with", () => {
+  // `size` is the slot the kit resolver picks for a shape axis; reading only `state` used to send
+  // every one of these to the base preview.
+  const byRef = indexDesignMap({
+    components: [
+      {
+        code: "Shapes.kt#MaterialShapesSticker",
+        ref: [
+          { ref: ref("1:1") },
+          { ref: ref("1:2"), size: "square" },
+          { ref: ref("1:3"), size: "very sunny" },
+        ],
+        previewId: [
+          { previewId: preview("Sticker_Light") },
+          { previewId: preview("Sticker_Light_VARIANT_square"), size: "square" },
+          { previewId: preview("Sticker_Light_VARIANT_very-sunny"), size: "very sunny" },
+        ],
+      },
+    ],
+  });
+  assert.equal(byRef.get(ref("1:1")).previewId, preview("Sticker_Light"));
+  assert.equal(byRef.get(ref("1:2")).previewId, preview("Sticker_Light_VARIANT_square"));
+  assert.equal(byRef.get(ref("1:3")).previewId, preview("Sticker_Light_VARIANT_very-sunny"));
+});
+
+test("still pairs a state-tagged entry, and falls back to the base preview when unmatched", () => {
+  const byRef = indexDesignMap({
+    components: [
+      {
+        code: "Buttons.kt#FilledButton",
+        ref: [
+          { ref: ref("2:1") },
+          { ref: ref("2:2"), state: "disabled" },
+          { ref: ref("2:3"), state: "hovered" },
+        ],
+        previewId: [
+          { previewId: preview("Button_Light") },
+          { previewId: preview("Button_Light_VARIANT_disabled"), state: "disabled" },
+        ],
+      },
+    ],
+  });
+  assert.equal(byRef.get(ref("2:2")).previewId, preview("Button_Light_VARIANT_disabled"));
+  // No `hovered` render: the base is the honest answer, not another variant's picture.
+  assert.equal(byRef.get(ref("2:3")).previewId, preview("Button_Light"));
+});
+
+test("reads the scalar form, and lets the first component to name a node win", () => {
+  const byRef = indexDesignMap({
+    components: [
+      { code: "A.kt#First", ref: ref("3:1"), previewId: preview("First_Light") },
+      { code: "B.kt#Second", ref: ref("3:1"), previewId: preview("Second_Light") },
+    ],
+  });
+  assert.equal(byRef.get(ref("3:1")).code, "A.kt#First");
+  assert.equal(byRef.size, 1);
+});
+
+test("relinking replaces stale join decoration", () => {
+  const fileKey = "kit";
+  const node = {
+    nodeId: "3:1",
+    name: "Cell",
+    depth: 2,
+    ref: "figma:old/3:1",
+    link: "manifest",
+    code: "Old.kt#Old",
+    previewId: "old-preview",
+    confidence: "high",
+  };
+
+  assert.deepEqual(linkNode(node, { fileKey, byRef: new Map() }), {
+    nodeId: "3:1",
+    name: "Cell",
+    depth: 2,
+    ref: "figma:kit/3:1",
+    link: "unlinked",
+  });
+
+  const mapped = new Map([
+    ["figma:kit/3:1", { code: "New.kt#New", previewId: "new-preview" }],
+  ]);
+  assert.deepEqual(linkNode(node, { fileKey, byRef: mapped }), {
+    nodeId: "3:1",
+    name: "Cell",
+    depth: 2,
+    ref: "figma:kit/3:1",
+    link: "manifest",
+    code: "New.kt#New",
+    previewId: "new-preview",
+    confidence: "high",
+  });
+});
+
+// ── Blend-aware pruning (#437) ────────────────────────────────────────────────────────────────
+//
+// The exclusions in `design-pages.json` exist to keep a component sheet under the size cap.
+// Five of them were carrying the backdrop that four screen-blended component sets are composited
+// against, and dropping them turned the published Buttons lane pale enough to read as a colour-token
+// bug. These tests pin the structural signal that tells the two cases apart.
+
+const buttonsPage = JSON.parse(
+  readFileSync(new URL("scripts/fixtures/glimmer-buttons-page.json", root), "utf8"),
+);
+
+/** The exclusions the committed config declares for that page, in the order it declares them. */
+const buttonsExclusions = JSON.parse(readFileSync(new URL("design-pages.json", root), "utf8"))
+  .pages.find((page) => page.id === "components-buttons")
+  .excludeNodes;
+
+test("an exclusion is a bare id or a classified object, deduplicated and canonicalised", () => {
+  assert.deepEqual(
+    normalizeExclusions([
+      "40000034-2406",
+      { node: "40000034:2411", decorative: true, reason: "a label, not a backplate" },
+      { nodeId: "40000034:2406" },
+      "",
+      null,
+    ]),
+    [
+      { nodeId: "40000034:2406", decorative: false },
+      {
+        nodeId: "40000034:2411",
+        decorative: true,
+        reason: "a label, not a backplate",
+      },
+    ],
+  );
+});
+
+test("the kit's Buttons page: every excluded bg is a backplate a screen-blended set reads", () => {
+  const required = findRequiredBackplates(buttonsPage, buttonsExclusions);
+  assert.deepEqual(
+    required.map((entry) => entry.nodeId).sort(),
+    [...buttonsExclusions].sort(),
+    "all five configured exclusions on this page are required backplates",
+  );
+  // A `bg` is 1920x1080 and its section frame is not, so one backplate legitimately underlies more
+  // than one blended group — the check reports every reader rather than the nearest one.
+  assert.deepEqual(
+    [...new Set(required.flatMap((entry) => entry.dependents.map((d) => d.nodeId)))].sort(),
+    ["40000113:3966", "40000113:4149", "40:655", "4116:3991", "5315:4650"].sort(),
+    "and the readers are exactly the kit's screen-blended groups",
+  );
+  assert.deepEqual(
+    Object.fromEntries(required.map((entry) => [entry.nodeId, entry.dependents.length > 0])),
+    Object.fromEntries(buttonsExclusions.map((node) => [node, true])),
+    "and no configured exclusion on this page is free of readers",
+  );
+  for (const entry of required) {
+    assert.equal(entry.name, "bg");
+    assert.ok(entry.dependents.every((d) => d.blendMode === "SCREEN"));
+  }
+});
+
+test("a decorative classification is honoured, and stays visible in the report", () => {
+  const required = findRequiredBackplates(
+    buttonsPage,
+    buttonsExclusions.map((node) => ({ node, decorative: true, reason: "checked by hand" })),
+  );
+  assert.equal(required.length, 5);
+  assert.ok(required.every((entry) => entry.decorative === true));
+  assert.ok(required.every((entry) => entry.reason === "checked by hand"));
+});
+
+test("a normal-blended layer over an excluded node is not a backdrop reader", () => {
+  const tree = {
+    id: "1:1",
+    name: "page",
+    absoluteBoundingBox: { x: 0, y: 0, width: 100, height: 100 },
+    children: [
+      {
+        id: "1:2",
+        name: "bg",
+        absoluteBoundingBox: { x: 0, y: 0, width: 100, height: 100 },
+      },
+      {
+        id: "1:3",
+        name: "label",
+        blendMode: "NORMAL",
+        absoluteBoundingBox: { x: 10, y: 10, width: 20, height: 20 },
+      },
+    ],
+  };
+  assert.deepEqual(findRequiredBackplates(tree, ["1:2"]), []);
+});
+
+test("a blended layer that does not overlap the excluded node leaves it prunable", () => {
+  const tree = {
+    id: "1:1",
+    absoluteBoundingBox: { x: 0, y: 0, width: 400, height: 100 },
+    children: [
+      { id: "1:2", name: "bg", absoluteBoundingBox: { x: 0, y: 0, width: 100, height: 100 } },
+      {
+        id: "1:3",
+        name: "blended",
+        blendMode: "SCREEN",
+        absoluteBoundingBox: { x: 200, y: 0, width: 100, height: 100 },
+      },
+    ],
+  };
+  assert.deepEqual(findRequiredBackplates(tree, ["1:2"]), []);
+});
+
+test("a blended layer INSIDE the excluded subtree goes with it", () => {
+  const tree = {
+    id: "1:1",
+    absoluteBoundingBox: { x: 0, y: 0, width: 100, height: 100 },
+    children: [
+      {
+        id: "1:2",
+        name: "bg",
+        absoluteBoundingBox: { x: 0, y: 0, width: 100, height: 100 },
+        children: [
+          {
+            id: "1:3",
+            name: "sheen",
+            blendMode: "SCREEN",
+            absoluteBoundingBox: { x: 0, y: 0, width: 100, height: 100 },
+          },
+        ],
+      },
+    ],
+  };
+  assert.deepEqual(findRequiredBackplates(tree, ["1:2"]), []);
+});
+
+test("a background blur reads its backdrop as surely as a blend mode does", () => {
+  const tree = {
+    id: "1:1",
+    absoluteBoundingBox: { x: 0, y: 0, width: 100, height: 100 },
+    children: [
+      { id: "1:2", name: "bg", absoluteBoundingBox: { x: 0, y: 0, width: 100, height: 100 } },
+      {
+        id: "1:3",
+        name: "scrim",
+        blendMode: "NORMAL",
+        effects: [{ type: "BACKGROUND_BLUR", visible: true, radius: 24 }],
+        absoluteBoundingBox: { x: 0, y: 0, width: 100, height: 100 },
+      },
+    ],
+  };
+  assert.deepEqual(
+    findRequiredBackplates(tree, ["1:2"]).map((entry) => entry.dependents[0].blendMode),
+    ["BACKGROUND_BLUR"],
+  );
+});
+
+test("a node with no geometry is kept rather than guessed at", () => {
+  const tree = {
+    id: "1:1",
+    children: [
+      { id: "1:2", name: "bg" },
+      { id: "1:3", name: "blended", blendMode: "MULTIPLY" },
+    ],
+  };
+  assert.equal(findRequiredBackplates(tree, ["1:2"]).length, 1);
+});
+
+test("the committed Buttons export retains exactly the blended groups the check names", () => {
+  // The other half of the fixture: the blend modes above are read from this file, so if the export
+  // is refreshed and the kit has restructured, this fails rather than the fixture silently ageing.
+  const svg = readFileSync(new URL("design/pages/components-buttons.svg", root), "utf8");
+  const blended = [...svg.matchAll(/data-node-id="([^"]+)"[^>]*style="[^"]*mix-blend-mode:screen/g)]
+    .map((match) => match[1])
+    .sort();
+  assert.deepEqual(blended, ["40000113:3966", "40000113:4149", "40:655", "4116:3991", "5315:4650"].sort());
+});

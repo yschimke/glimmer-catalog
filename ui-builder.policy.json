@@ -1,0 +1,51 @@
+{
+  "$schema": "https://raw.githubusercontent.com/yschimke/compose-ai-tools/main/scripts/design-artifacts/ui-builder.policy.schema.json",
+  "$comment": "Compose Glimmer as a UI Builder palette. Component records are discovered from the real Glimmer call sites rendered by the catalog; this file owns only catalog-level policy.",
+  "schema": "compose-ui-builder-policy/v1",
+  "componentIdPrefix": "glimmer/",
+  "platform": "glasses",
+  "platformLabel": "Glasses",
+  "previewSurfaces": {
+    "wasm": {
+      "fidelity": "approximate",
+      "reason": "The builder canvas does not yet link this repository's CMP Glimmer port, so components are represented by catalog-aware placeholders."
+    },
+    "native": {
+      "fidelity": "authoritative",
+      "backend": "android",
+      "reason": "Generated Compose rendered against the released AndroidX Glimmer AAR through Robolectric, the same lane used by the catalog."
+    }
+  },
+  "frame": {
+    "adapter": "frame/rect",
+    "seedDevice": "spec:width=960dp,height=720dp,dpi=160"
+  },
+  "menu": {
+    "groupOrder": [
+      "Button",
+      "Button group",
+      "Icon button",
+      "Card",
+      "List item",
+      "Lazy list",
+      "Stack",
+      "Voice input"
+    ]
+  },
+  "colorTokens": {
+    "roles": [
+      "background",
+      "surface",
+      "primary",
+      "secondary",
+      "positive",
+      "negative"
+    ]
+  },
+  "builtins": {},
+  "components": {
+    "glimmer/sticker": {
+      "excluded": "The catalog's own preview frame is not a Glimmer library component."
+    }
+  }
+}

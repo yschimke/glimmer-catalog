@@ -1,0 +1,5 @@
+{
+  "$schema": "https://github.com/yschimke/design-parity/schema/parity-config.schema.json",
+  "$comment": "The public Glimmer kit is authoritative. Figma is read-only and code-to-canvas push-back is structurally disabled by design-led direction.",
+  "direction": "design-led"
+}

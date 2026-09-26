@@ -1,0 +1,1083 @@
+#!/usr/bin/env node
+// Import whole PAGES of the Material 3 Design Kit as cached SVG, with the node id of every
+// component on them joined back to the code that implements it.
+//
+// WHAT THIS REPLACES
+//
+// The first cut of this surface imported *one composed screen* (`Examples` → Upcoming-Mobile) as a
+// flat PNG and drew a rectangle per component instance on it. `docs/FIGMA_PAGES.md` records why
+// that never paid off: `Examples` is the only page in the file with instances on it, most of each
+// screen is hand-drawn rather than assembled from the kit, and the densest screen in the whole file
+// yields eleven placements of which two are OS chrome.
+//
+// The kit's *value* is on the other thirty pages — the component definition sheets. A definition
+// page is a specimen: `Shape` is the corner-radius scale plus the 35-shape Expressive library,
+// `Buttons` is every button variant, laid out as the designer intends them to be read. That is the
+// thing worth putting our renders on top of, because a definition sheet is exactly the claim this
+// catalog is trying to reproduce.
+//
+// SO: A PAGE, AS SVG, WITH IDS
+//
+// Two REST calls per page:
+//
+//   1. `/v1/files/:key/nodes?ids=<page>` — the node tree. Every COMPONENT / COMPONENT_SET /
+//      INSTANCE under the page becomes a `nodes` entry, carrying its node id and layer name.
+//   2. `/v1/images/:key?ids=<page>&format=svg&svg_include_node_id=true` — the page as one SVG,
+//      with `data-node-id` on every element.
+//
+// `svg_include_node_id` is the whole trick. It means the cached SVG is not a picture but a
+// *document we can address*: given a node id, a consumer can find that shape in the markup, hide
+// it, and put our own render in the hole it leaves — which is what the preview server's
+// `/{system}/pages/` surface now does.
+//
+// NO GEOMETRY IS RECORDED, DELIBERATELY
+//
+// A node carries no bounding box. The old PNG manifest had to carry one — a flat raster has no
+// structure to ask. An SVG does: the element is right there, and its box is whatever the browser
+// measures. Recording Figma's `absoluteBoundingBox` alongside would introduce a second, weaker
+// answer to the same question — weaker because the export box is the *render* bounds (it includes
+// effect bleed), so the two disagree by a few pixels on anything with a shadow, and a consumer
+// choosing between them would silently pick the wrong one. One source of truth: the SVG.
+//
+// EVERY PAGE, NOT A HAND-KEPT LIST
+//
+// The kit has ~31 pages and `docs/FIGMA_PAGES.md` could name only half of them: page ids are as
+// undiscoverable as node ids, and fourteen of them were listed there as bare numbers because naming
+// one costs a full subtree dump through the MCP server. Requiring a human to type an id, a name and
+// a slug per page is what kept this import at one page.
+//
+// So `design-pages.json` can say `"discover": true`, and the importer asks the file itself — the
+// same one request `design-parity-pages list` makes (`GET /v1/files/:key?depth=1`, the document
+// truncated to its pages). Each page it finds becomes an entry whose **id is a slug of the page's
+// own name** (`Date & time pickers` → `date-time-pickers`), so the published URL reads like the
+// design file rather than like a node id.
+//
+// `pages` is still honoured, and now means *pinned*: an entry there fixes the id (and optionally
+// the name) for that node, wherever discovery finds it. `shape` is pinned for exactly that reason —
+// its URL is already published, and a slug is only stable while the designer leaves the page name
+// alone. `exclude` drops a page by node id or by name.
+//
+// EXCLUDING A DESCENDANT IS A REQUEST, NOT AN ORDER
+//
+// `excludeNodes` names descendants to drop so a sheet fits under the size cap. It is a request,
+// because one class of layer cannot be dropped without changing the colour of what is left:
+// anything a RETAINED layer blends against. Figma composites at render time, so a
+// `mix-blend-mode: screen` group reads whatever is under it, and removing its backplate silently
+// repaints it against the page's pale section fallback — which is exactly how #437 presented, as
+// four Glimmer component sets that looked like a broken colour export.
+//
+// So the importer checks the node tree before it prunes (`findRequiredBackplates`) and RETAINS an
+// excluded node that a retained blended or background-blurred layer overlaps, saying so in the run
+// log. Two escapes, both explicit:
+//
+//   * `{"node": "40000034:2406", "decorative": true, "reason": "…"}` — a human looked and says the
+//     blend does not depend on it. A positive assertion, because the silent default is what went
+//     wrong.
+//   * the size cap still wins. A page that busts `maxSvgBytes` with its backplates retained is
+//     re-pruned without them and published with `backplatesPruned: true` on its manifest entry,
+//     rather than being dropped: losing the sheet costs every component on it its node ids and its
+//     swap, and the flag makes the degraded compositing legible to the consumer instead of a
+//     mystery.
+//
+// USAGE
+//
+//   FIGMA_TOKEN=figd_... node scripts/import-figma-pages.mjs
+//   FIGMA_TOKEN=figd_... node scripts/import-figma-pages.mjs --page shape
+//
+// Reads `design-pages.json` (which pages, and where to write them) and `design-map.json` (the
+// node → code join, itself derived from the `@CatalogComponent(reference = …)` annotations). Writes
+// `<outDir>/pages.json` and one `<outDir>/<id>.svg` per page.
+//
+// This script is READ-ONLY against Figma, like every other Figma interaction in this repo. The
+// token needs `file_content:read` — the same scope `design-parity-propose-refs` and
+// `design-parity-pages list` already document.
+
+import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+/** The manifest version this importer writes. Mirrored by `DesignPagesManifest` in the server. */
+const PAGES_VERSION = 2;
+
+/** Node types that become nodes on the page: the things a definition sheet is *made of*. */
+const PLACEABLE_TYPES = new Set(["COMPONENT", "COMPONENT_SET", "INSTANCE"]);
+
+/**
+ * How many nodes one page may carry. The server caps at 500 and drops the rest; refusing here as
+ * well means the cache never carries a node the consumer will silently discard.
+ */
+const MAX_NODES = 500;
+
+/**
+ * How large one page's export may be before it is skipped rather than cached, in bytes.
+ *
+ * Importing every page changes the arithmetic here. The `Shape` sheet is ~0.8 MB, but the kit's
+ * `Buttons` page carries a few thousand component nodes and `Examples` fourteen whole screens, and
+ * the cache is *committed* — to this repo and then, on every regeneration, to the
+ * `design-artifacts/glimmer-catalog` delivery branch, whose history is append-only by design. A page
+ * nobody can open (the server caps at 500 nodes, so a 3000-node sheet is mostly undrawable anyway)
+ * is not worth tens of megabytes in two histories.
+ *
+ * A page over the cap is *skipped with a warning*, not fatal: with discovery on, an enormous sheet
+ * is a fact about the design file, not a mistake in the config. Override with `maxSvgBytes`.
+ */
+const MAX_SVG_BYTES = 12 * 1024 * 1024;
+
+/** A page id is a URL path segment on `/{system}/pages/{id}` — `ServeDesignPageStore.SAFE_ID`. */
+const SAFE_ID = /^[A-Za-z0-9._-]{1,160}$/;
+
+function arg(name, fallback) {
+  const i = process.argv.indexOf(`--${name}`);
+  return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : fallback;
+}
+
+const configPath = arg("config", "design-pages.json");
+const designMapPath = arg("design-map", "design-map.json");
+const kitIndexPath = arg("kit-index", "figma-kit-index.json");
+const onlyPage = arg("page", null);
+const relinkOnly = process.argv.includes("--relink");
+const checkOnly = process.argv.includes("--check");
+const token = process.env.FIGMA_TOKEN;
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/** `123-456` and `123:456` are the same node. Figma accepts both on input and answers with `:`. */
+export function canonicalNodeId(id) {
+  return String(id ?? "").replace(/-/g, ":");
+}
+
+/**
+ * A route-safe page id from the page's own name — `Date & time pickers` → `date-time-pickers`.
+ *
+ * The id is the published URL (`/{system}/pages/{id}`) and the join key a pin uses, so it is
+ * deliberately derived from the *name* rather than the node id: `55141:14175` tells a reader
+ * nothing, and the names are what `docs/FIGMA_PAGES.md` is a table of. A name that slugs to nothing
+ * — punctuation only, or an alphabet this regex does not survive — falls back to the node id with
+ * its colon dashed, which is ugly but addressable, and never empty.
+ */
+export function slugForPage(name, nodeId) {
+  const slug = String(name ?? "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 160)
+    .replace(/-+$/g, "");
+  if (slug !== "" && SAFE_ID.test(slug) && !/^\.{1,2}$/.test(slug) && !/\.svg$/i.test(slug)) {
+    return slug;
+  }
+  return canonicalNodeId(nodeId).replace(/:/g, "-");
+}
+
+/** The ids the consumer refuses: not route-safe, a path segment, or shadowed by an export URL. */
+function assertUsableId(id, where) {
+  if (!SAFE_ID.test(id) || /^\.{1,2}$/.test(id) || /\.svg$/i.test(id)) {
+    throw new Error(`${where} declares the id ${JSON.stringify(id)}, which the server will refuse`);
+  }
+}
+
+/**
+ * The pages to import: the file's own page list, with `pages` pins applied and `exclude` removed.
+ *
+ * `discovered` is what `GET /v1/files/:key?depth=1` returned (document order, which is the order
+ * the designer put the tabs in — the most useful order for the published index, and a stable one to
+ * diff the manifest against). `pins` is `design-pages.json`'s `pages` array: an entry there fixes
+ * the id — and the name, if it gives one — for its node id, so a published URL never moves because
+ * a designer renamed a tab. A pin whose node the file does not contain is kept and appended, so the
+ * importer behaves exactly as it did before discovery existed when `discovered` is empty.
+ *
+ * `exclude` matches a node id or a page name (case-insensitively), because a human writing that
+ * list has the names in front of them and the ids nowhere.
+ */
+export function resolvePages({ pins = [], discovered = [], exclude = [] } = {}) {
+  const excludedIds = new Set();
+  const excludedNames = new Set();
+  for (const entry of exclude) {
+    const text = String(entry ?? "").trim();
+    if (text === "") continue;
+    if (/^\d+[-:]\d+$/.test(text)) excludedIds.add(canonicalNodeId(text));
+    else excludedNames.add(text.toLowerCase());
+  }
+  const isExcluded = (nodeId, name) =>
+    excludedIds.has(canonicalNodeId(nodeId)) || excludedNames.has(String(name ?? "").toLowerCase());
+
+  const pinsByNode = new Map();
+  for (const pin of pins) {
+    const nodeId = canonicalNodeId(pin?.nodeId);
+    if (nodeId === "") throw new Error(`a pin in "pages" names no nodeId`);
+    const id =
+      typeof pin?.id === "string" && pin.id !== "" ? pin.id : slugForPage(pin?.name, nodeId);
+    assertUsableId(id, `the pin for ${nodeId}`);
+    if (pinsByNode.has(nodeId)) throw new Error(`"pages" pins ${nodeId} twice`);
+    pinsByNode.set(nodeId, {
+      id,
+      nodeId,
+      ...(pin?.name ? { name: String(pin.name) } : {}),
+      ...(pin?.excludeNodes ? { excludeNodes: asArray(pin.excludeNodes) } : {}),
+    });
+  }
+
+  const taken = new Set([...pinsByNode.values()].map((pin) => pin.id));
+  const usedPins = new Set();
+  const resolved = [];
+
+  for (const page of discovered) {
+    const nodeId = canonicalNodeId(page?.nodeId ?? page?.id);
+    if (nodeId === "") continue;
+    const name = String(page?.name ?? "");
+    const pin = pinsByNode.get(nodeId);
+    if (isExcluded(nodeId, pin?.name ?? name)) continue;
+    if (pin) {
+      usedPins.add(nodeId);
+      // The pin fixes the id; the *name* still comes from the file unless the pin overrode it, so a
+      // renamed page reads correctly in the index while keeping its published URL.
+      resolved.push({ ...pin, nodeId, name: pin.name ?? name, pinned: true });
+      continue;
+    }
+    let id = slugForPage(name, nodeId);
+    if (taken.has(id)) {
+      // Two tabs may share a name. Suffixing keeps both importable; the first one found keeps the
+      // bare slug so an already-published URL is not the one that moves.
+      let n = 2;
+      while (taken.has(`${id}-${n}`)) n += 1;
+      id = `${id}-${n}`;
+    }
+    taken.add(id);
+    resolved.push({ id, nodeId, name });
+  }
+
+  for (const [nodeId, pin] of pinsByNode) {
+    if (usedPins.has(nodeId) || isExcluded(nodeId, pin.name)) continue;
+    resolved.push({ ...pin, nodeId, name: pin.name ?? pin.id, pinned: true });
+  }
+  return resolved;
+}
+
+/** SVG cache entries that no longer correspond to a resolved page. */
+export function stalePageSvgNames(fileNames, pageIds) {
+  const wanted = new Set(pageIds.map((id) => `${id}.svg`));
+  return fileNames.filter((name) => name.endsWith(".svg") && !wanted.has(name));
+}
+
+/**
+ * One REST call, with backoff on 429/5xx.
+ *
+ * Retrying matters more here than in `design-parity-pages list`: a page import is two calls plus an
+ * asset download, and the asset host is a different origin with its own limits.
+ */
+async function get(url, { headers = {}, attempt = 0 } = {}) {
+  const res = await fetch(url, { headers });
+  if (res.ok) return res;
+  const retryable = res.status === 429 || res.status >= 500;
+  if (!retryable || attempt >= 4) {
+    throw new Error(`${url.replace(/\?.*$/, "")} → HTTP ${res.status} ${await res.text()}`);
+  }
+  const after = Number(res.headers.get("retry-after"));
+  await sleep(Number.isFinite(after) && after > 0 ? after * 1000 : 1000 * 2 ** attempt);
+  return get(url, { headers, attempt: attempt + 1 });
+}
+
+async function figma(pathAndQuery) {
+  const res = await get(`https://api.figma.com${pathAndQuery}`, {
+    headers: { "X-Figma-Token": token },
+  });
+  return res.json();
+}
+
+/**
+ * The variant slot a resolved `design-map.json` entry was tagged with, or `null` for the base one.
+ *
+ * `@design-parity/kit-index` tags each resolved variant with ONE of `state` / `size` / `theme`, and
+ * which one it picks depends on the axis it matched — a button's sizes come back as `size`, an
+ * interaction as `state`. The two sides of an entry are always tagged the same way, so the join
+ * below only needs "the tag this entry carries", not a guess at which slot it should have been.
+ *
+ * Reading `state` alone is what this used to do, and it silently degraded every `size`-tagged
+ * entry: no state, so every ref fell through to the component's base preview. Folding the 35-shape
+ * `Shape Set` onto one component is what surfaced it — the shapes resolve as `size` (their axis is
+ * neither an interaction nor a theme), so all 35 kit symbols would have swapped in the Circle
+ * render, which is the same picture 35 times and reads as a working page.
+ */
+function variantSlot(tagged) {
+  if (!tagged || typeof tagged === "string") return null;
+  return tagged.state ?? tagged.size ?? tagged.theme ?? null;
+}
+
+/**
+ * `design-map.json` keyed by design ref — the join this whole surface hangs on.
+ *
+ * The map is a projection of the `@CatalogComponent(reference = …)` annotations, so a page node
+ * links to code exactly when some component named that node id. Both the scalar and the per-variant
+ * array forms are read; a variant array contributes one entry per ref, each paired with the preview
+ * id of the *same* variant, because that is the render a consumer will draw and pairing by position
+ * alone would silently mismatch them.
+ *
+ * Exported for its own test: every failure mode here is quiet. A ref that pairs with the wrong
+ * preview still renders something, and a page of 35 identical silhouettes looks like a page.
+ */
+export function indexDesignMap(map) {
+  const byRef = new Map();
+  for (const entry of map?.components ?? []) {
+    const code = entry.code;
+    if (typeof code !== "string" || code === "") continue;
+
+    const previewsByVariant = new Map();
+    let basePreview = null;
+    for (const p of asArray(entry.previewId)) {
+      if (typeof p === "string") basePreview ??= p;
+      else if (p?.previewId) {
+        const slot = variantSlot(p);
+        if (slot) previewsByVariant.set(slot, p.previewId);
+        else basePreview ??= p.previewId;
+      }
+    }
+    for (const r of asArray(entry.ref)) {
+      const ref = typeof r === "string" ? r : r?.ref;
+      if (typeof ref !== "string" || ref === "") continue;
+      const slot = variantSlot(r);
+      const previewId = (slot && previewsByVariant.get(slot)) || basePreview || null;
+      // First writer wins: two components naming one node is a mapping bug, and picking the later
+      // one silently would make which of them shows depend on file order.
+      if (!byRef.has(ref)) byRef.set(ref, { code, previewId });
+    }
+  }
+  return byRef;
+}
+
+function readDesignMap(file) {
+  try {
+    return indexDesignMap(JSON.parse(readFileSync(file, "utf8")));
+  } catch (error) {
+    console.warn(`import-figma-pages: no usable ${file} (${error.message}); nothing will link`);
+    return new Map();
+  }
+}
+
+/** The public component-set ids declared by the committed kit index. */
+function readPublicSetIds(file, fileKey) {
+  const index = JSON.parse(readFileSync(file, "utf8"));
+  if (index.fileKey !== fileKey) {
+    throw new Error(
+      `${file} indexes ${index.fileKey ?? "no file"}, but ${configPath} names ${fileKey}`,
+    );
+  }
+  return new Set(Object.keys(index.sets ?? {}).map(canonicalNodeId));
+}
+
+/** Node ids explicitly claimed by the design map for this design file. */
+function mappedNodeIds(byRef, fileKey) {
+  const prefix = `figma:${fileKey}/`;
+  return new Set(
+    [...byRef.keys()]
+      .filter((ref) => ref.startsWith(prefix))
+      .map((ref) => canonicalNodeId(ref.slice(prefix.length))),
+  );
+}
+
+/** The pages already in the cache, so a scoped refresh adds to it rather than replacing it. */
+function readCachedPages(outDir) {
+  try {
+    const cached = JSON.parse(readFileSync(path.join(outDir, "pages.json"), "utf8"));
+    return Array.isArray(cached.pages) ? cached.pages : [];
+  } catch {
+    return [];
+  }
+}
+
+function asArray(value) {
+  if (value == null) return [];
+  return Array.isArray(value) ? value : [value];
+}
+
+/**
+ * Every COMPONENT / COMPONENT_SET / INSTANCE under `root`, depth-first.
+ *
+ * `publicSetIds` comes from the committed kit index. A set absent from it is one of the kit's
+ * private construction sets, unless the catalog explicitly maps one of its descendants. The tree
+ * is the only sound place to make that decision: after flattening, a variant no longer says which
+ * set it came from.
+ */
+export function collectNodes(root, { publicSetIds, mappedIds, excludedNodeIds } = {}) {
+  const classifyInventory = publicSetIds != null || mappedIds != null;
+  const indexedSets = publicSetIds ?? new Set();
+  const claimedNodes = mappedIds ?? new Set();
+  const excludedNodes = excludedNodeIds ?? new Set();
+  const publicSets = new Set(indexedSets);
+
+  function findClaimedSets(node) {
+    if (excludedNodes.has(canonicalNodeId(node.id))) return false;
+    let claimed = claimedNodes.has(canonicalNodeId(node.id));
+    for (const child of node.children ?? []) claimed = findClaimedSets(child) || claimed;
+    if (node.type === "COMPONENT_SET" && claimed) publicSets.add(canonicalNodeId(node.id));
+    return claimed;
+  }
+  if (classifyInventory) findClaimedSets(root);
+
+  const out = [];
+  function walk(node, depth, enclosingSetPublic = null) {
+    const nodeId = canonicalNodeId(node.id);
+    if (excludedNodes.has(nodeId)) return;
+    const setPublic =
+      node.type === "COMPONENT_SET" ? publicSets.has(nodeId) : enclosingSetPublic;
+    if (depth > 0 && PLACEABLE_TYPES.has(node.type)) {
+      const inventory =
+        claimedNodes.has(nodeId) ||
+        setPublic === true ||
+        (!classifyInventory && setPublic == null);
+      out.push({
+        nodeId,
+        name: String(node.name ?? ""),
+        depth,
+        ...(classifyInventory && !inventory ? { inventory: false } : {}),
+        // The node's own type, which is what lets the consumer tell a CONTAINER from the components
+        // inside it: a `COMPONENT_SET` is the box a family came in, its variants are the components,
+        // and both are listed. `DesignPage.coverageGaps` reads this, and without it falls back to
+        // inferring containment from nesting depth — an inference an unlisted frame between two
+        // components can fool, since only components are listed. A fact is cheaper than a judgement.
+        type: String(node.type ?? ""),
+      });
+      // A specimen's INSIDES are not specimens, whatever the node type says. Its children are that
+      // other component's internals: they carry ids nothing in `design-map.json` can name — a
+      // reference names a variant, never a part of one — so every last one of them publishes as "no
+      // code behind this", and the page then paints red inside a node this catalog *does* implement.
+      // A COMPONENT_SET is the one exception: its children are the variants the grid publishes.
+      if (node.type !== "COMPONENT_SET") return;
+    }
+    for (const child of node.children ?? []) walk(child, depth + 1, setPublic);
+  }
+  walk(root, 0);
+  return out;
+}
+
+/**
+ * Apply the server's node cap without letting private kit construction consume it first.
+ *
+ * Public definitions, containers and explicitly linked instances get the capacity they need; any
+ * remaining slots carry internal/furniture nodes. Filtering the original list at the end preserves
+ * the design file's document order.
+ */
+export function limitNodes(nodes, maxNodes = MAX_NODES) {
+  if (nodes.length <= maxNodes) return nodes;
+  const primary = nodes.filter(
+    (node) =>
+      node.inventory !== false && !(node.type === "INSTANCE" && node.link === "unlinked"),
+  );
+  const selected = primary.slice(0, maxNodes);
+  if (selected.length < maxNodes) {
+    const primarySet = new Set(primary);
+    selected.push(
+      ...nodes.filter((node) => !primarySet.has(node)).slice(0, maxNodes - selected.length),
+    );
+  }
+  const selectedSet = new Set(selected);
+  return nodes.filter((node) => selectedSet.has(node));
+}
+
+/**
+ * The SVG's own coordinate space, read off its root element.
+ *
+ * This is the page's frame: the aspect ratio a consumer lays the stage out with, and the space
+ * every `data-node-id` element is positioned in. Taken from the export rather than computed from
+ * the node tree precisely so that the number a consumer draws with is the number the picture was
+ * drawn at.
+ */
+function frameOf(svg) {
+  const root = /<svg\b[^>]*>/i.exec(svg)?.[0] ?? "";
+  const viewBox = /viewBox\s*=\s*"([^"]*)"/i.exec(root)?.[1];
+  if (viewBox) {
+    const parts = viewBox.trim().split(/[\s,]+/).map(Number);
+    if (parts.length === 4 && parts.every(Number.isFinite) && parts[2] > 0 && parts[3] > 0) {
+      return { width: parts[2], height: parts[3] };
+    }
+  }
+  const width = Number(/\bwidth\s*=\s*"(\d+(?:\.\d+)?)"/i.exec(root)?.[1]);
+  const height = Number(/\bheight\s*=\s*"(\d+(?:\.\d+)?)"/i.exec(root)?.[1]);
+  if (width > 0 && height > 0) return { width, height };
+  throw new Error("the exported SVG declares no usable viewBox or size");
+}
+
+/** How many `data-node-id` attributes the export actually carries — the check that matters most. */
+function countNodeIds(svg) {
+  return (svg.match(/\bdata-node-id\s*=/g) ?? []).length;
+}
+
+function referencedDefinitionIds(text) {
+  const ids = new Set();
+  const pattern = /(?:url\(\s*#|(?:xlink:)?href\s*=\s*["']#)([^)"']+)/gi;
+  for (const match of text.matchAll(pattern)) ids.add(match[1]);
+  return ids;
+}
+
+/**
+ * Blend modes whose result is a function of what is BEHIND the layer.
+ *
+ * Figma reports a node's blend mode as `PASS_THROUGH` (groups), `NORMAL` (everything else by
+ * default) or one of these. A `NORMAL` layer draws the same over any backdrop, so removing what is
+ * under it costs nothing but bytes. A `SCREEN` layer does not: `#303030` over the kit's photographic
+ * backplate is a lit component, and the same source over the pale `#E8E5EE` section fallback is
+ * very nearly nothing — which is the whole of #437.
+ */
+const BACKDROP_BLEND_MODES = new Set([
+  "MULTIPLY",
+  "SCREEN",
+  "OVERLAY",
+  "DARKEN",
+  "LIGHTEN",
+  "COLOR_DODGE",
+  "COLOR_BURN",
+  "HARD_LIGHT",
+  "SOFT_LIGHT",
+  "DIFFERENCE",
+  "EXCLUSION",
+  "HUE",
+  "SATURATION",
+  "COLOR",
+  "LUMINOSITY",
+  "LINEAR_BURN",
+  "LINEAR_DODGE",
+]);
+
+/**
+ * One descendant the config asks the import to drop, with the human's classification attached.
+ *
+ * An entry is either a bare node id — "drop this, no claim made about why" — or an object naming
+ * the node and saying what it is. `decorative: true` is the ONE thing that lets a required backplate
+ * be dropped anyway, and it is deliberately a positive assertion a human has to write: #437's five
+ * `bg` instances were dropped as decorative on exactly that unstated assumption, and they were
+ * carrying the backdrop four screen-blended component sets are composited against.
+ */
+export function normalizeExclusions(entries = []) {
+  const out = [];
+  const seen = new Set();
+  for (const entry of entries) {
+    const nodeId =
+      typeof entry === "string" || typeof entry === "number"
+        ? canonicalNodeId(String(entry).trim())
+        : canonicalNodeId(String(entry?.node ?? entry?.nodeId ?? "").trim());
+    if (nodeId === "" || seen.has(nodeId)) continue;
+    seen.add(nodeId);
+    out.push({
+      nodeId,
+      decorative: typeof entry === "object" && entry !== null ? entry.decorative === true : false,
+      ...(typeof entry === "object" && entry?.reason ? { reason: String(entry.reason) } : {}),
+    });
+  }
+  return out;
+}
+
+/** Two Figma `absoluteBoundingBox`es overlapping by more than a rounding error. */
+function boxesIntersect(a, b) {
+  if (!a || !b) return true; // No box is no evidence of separation: assume the worst and keep.
+  const EPSILON = 0.5;
+  return (
+    a.x + a.width > b.x + EPSILON &&
+    b.x + b.width > a.x + EPSILON &&
+    a.y + a.height > b.y + EPSILON &&
+    b.y + b.height > a.y + EPSILON
+  );
+}
+
+/**
+ * The excluded nodes that a RETAINED backdrop-dependent layer is composited against.
+ *
+ * Figma flattens nothing at export time, so a `mix-blend-mode: screen` group in the SVG reads
+ * whatever the consumer leaves under it. Deleting a backplate therefore does not remove a
+ * decoration — it changes the colour of everything blended over it, silently, in a way that looks
+ * like a bad colour export rather than like a missing layer.
+ *
+ * Detection is structural rather than visual, and uses the node tree the import already fetched:
+ * a retained node whose `blendMode` is backdrop-dependent (or which carries a background blur, the
+ * other backdrop reader Figma publishes) and whose box overlaps an excluded subtree makes that
+ * subtree REQUIRED.
+ *
+ * Opacity is deliberately not a trigger. A translucent layer does read its backdrop, but Figma
+ * authors set opacity on a large share of all nodes, so treating it as a signal would mark nearly
+ * every exclusion required and the check would stop meaning anything. The blend modes are the
+ * narrow, load-bearing case, and they are the one #437 measured.
+ */
+export function findRequiredBackplates(root, exclusions = []) {
+  const declared = normalizeExclusions(exclusions);
+  const byId = new Map(declared.map((entry) => [entry.nodeId, entry]));
+  if (byId.size === 0) return [];
+
+  const excludedSubtrees = [];
+  const dependents = [];
+
+  function backdropReader(node) {
+    if (BACKDROP_BLEND_MODES.has(String(node?.blendMode ?? ""))) return String(node.blendMode);
+    if ((node?.effects ?? []).some((effect) => effect?.type === "BACKGROUND_BLUR" && effect?.visible !== false))
+      return "BACKGROUND_BLUR";
+    return null;
+  }
+
+  function walk(node, excludedRoot) {
+    const nodeId = canonicalNodeId(node?.id);
+    const entry = excludedRoot ?? byId.get(nodeId);
+    if (entry && entry !== excludedRoot) {
+      excludedSubtrees.push({
+        ...entry,
+        name: String(node?.name ?? ""),
+        box: node?.absoluteBoundingBox ?? null,
+      });
+    }
+    if (!entry) {
+      const mode = backdropReader(node);
+      if (mode) {
+        dependents.push({
+          nodeId,
+          name: String(node?.name ?? ""),
+          blendMode: mode,
+          box: node?.absoluteBoundingBox ?? null,
+        });
+      }
+    }
+    for (const child of node?.children ?? []) walk(child, entry ?? null);
+  }
+  walk(root, null);
+
+  return excludedSubtrees
+    .map((excluded) => ({
+      nodeId: excluded.nodeId,
+      name: excluded.name,
+      decorative: excluded.decorative,
+      ...(excluded.reason ? { reason: excluded.reason } : {}),
+      dependents: dependents
+        .filter((dependent) => boxesIntersect(excluded.box, dependent.box))
+        .map(({ box: _box, ...rest }) => rest),
+    }))
+    .filter((excluded) => excluded.dependents.length > 0);
+}
+
+/**
+ * Remove explicitly named Figma descendants and definitions that only those descendants used.
+ *
+ * Figma cannot exclude descendants at export time. Keeping this as a deterministic import step
+ * lets a config retain the kit's documentation-frame structure while dropping decorative image
+ * layers that otherwise turn a small component sheet into a 200 MB SVG.
+ */
+export function pruneSvgNodes(svg, excludedNodeIds = []) {
+  const excluded = new Set(excludedNodeIds.map((id) => String(id).trim()).filter(Boolean));
+  if (excluded.size === 0) return { svg, removed: 0 };
+
+  const tags = /<!--[\s\S]*?-->|<\/?[A-Za-z][^>]*>/g;
+  const pieces = [];
+  let copyFrom = 0;
+  let skippedDepth = 0;
+  let removed = 0;
+  for (const match of svg.matchAll(tags)) {
+    const tag = match[0];
+    if (tag.startsWith("<!--")) continue;
+    const closing = /^<\//.test(tag);
+    const selfClosing = /\/\s*>$/.test(tag);
+    if (skippedDepth > 0) {
+      if (!closing && !selfClosing) skippedDepth += 1;
+      if (closing) skippedDepth -= 1;
+      if (skippedDepth === 0) copyFrom = match.index + tag.length;
+      continue;
+    }
+    if (closing) continue;
+    const nodeId = /\bdata-node-id\s*=\s*["']([^"']+)["']/i.exec(tag)?.[1];
+    const componentId = nodeId?.split(";").at(-1)?.replace(/^I/, "");
+    if (nodeId == null || (!excluded.has(nodeId) && !excluded.has(componentId))) continue;
+    pieces.push(svg.slice(copyFrom, match.index));
+    removed += 1;
+    if (selfClosing) copyFrom = match.index + tag.length;
+    else skippedDepth = 1;
+  }
+  pieces.push(svg.slice(copyFrom));
+  let pruned = pieces.join("");
+
+  // Figma stores raster payloads and paint/filter resources in <defs>. Removing the visible node
+  // without collecting unreachable definitions would leave almost all of its bytes behind.
+  pruned = pruned.replace(/<defs\b([^>]*)>([\s\S]*?)<\/defs>/gi, (whole, attrs, inner) => {
+    const definitions = [];
+    const tokenPattern = /<!--[\s\S]*?-->|<\/?[A-Za-z][^>]*>/g;
+    let depth = 0;
+    let start = -1;
+    for (const token of inner.matchAll(tokenPattern)) {
+      const tag = token[0];
+      if (tag.startsWith("<!--")) continue;
+      const closing = /^<\//.test(tag);
+      const selfClosing = /\/\s*>$/.test(tag);
+      if (!closing && depth === 0) start = token.index;
+      if (!closing && !selfClosing) depth += 1;
+      if (closing) depth -= 1;
+      if ((selfClosing && depth === 0) || (closing && depth === 0 && start >= 0)) {
+        const end = token.index + tag.length;
+        const source = inner.slice(start, end);
+        const id = /\bid\s*=\s*["']([^"']+)["']/i.exec(source)?.[1];
+        definitions.push({ id, source });
+        start = -1;
+      }
+    }
+
+    const byId = new Map(definitions.filter((entry) => entry.id).map((entry) => [entry.id, entry]));
+    const body = pruned.replace(whole, "");
+    const reachable = referencedDefinitionIds(body);
+    const queue = [...reachable];
+    while (queue.length > 0) {
+      const definition = byId.get(queue.pop());
+      if (!definition) continue;
+      for (const id of referencedDefinitionIds(definition.source)) {
+        if (!reachable.has(id)) {
+          reachable.add(id);
+          queue.push(id);
+        }
+      }
+    }
+    const kept = definitions
+      .filter((entry) => entry.id == null || reachable.has(entry.id))
+      .map((entry) => entry.source)
+      .join("\n");
+    return `<defs${attrs}>${kept === "" ? "" : `\n${kept}\n`}</defs>`;
+  });
+
+  return { svg: pruned, removed };
+}
+
+async function importPage(
+  page,
+  {
+    fileKey,
+    byRef,
+    publicSetIds,
+    mappedIds,
+    outDir,
+    maxSvgBytes = MAX_SVG_BYTES,
+    excludeNodes = [],
+  },
+) {
+  const nodeId = canonicalNodeId(page.nodeId);
+  const encoded = encodeURIComponent(nodeId);
+
+  const tree = await figma(`/v1/files/${fileKey}/nodes?ids=${encoded}`);
+  const document = tree?.nodes?.[nodeId]?.document;
+  if (!document) throw new Error(`node ${nodeId} is not in file ${fileKey}`);
+
+  // `svg_include_node_id` is the reason this surface exists at all — without it the export is a
+  // picture. `svg_outline_text` is left at its default (true): outlined text renders identically
+  // everywhere, and a specimen sheet is mostly labels, so a font substitution on the consumer's box
+  // would make the design half of a comparison wrong in exactly the way it is meant to be right.
+  const images = await figma(
+    `/v1/images/${fileKey}?ids=${encoded}&format=svg&svg_include_node_id=true`,
+  );
+  const url = images?.images?.[nodeId];
+  if (typeof url !== "string" || url === "") {
+    throw new Error(`Figma rendered no SVG for ${nodeId}: ${images?.err ?? "no url"}`);
+  }
+  const exportedSvg = await (await get(url)).text();
+  if (!/^\s*<svg\b/i.test(exportedSvg))
+    throw new Error("the export did not start with an <svg> element");
+  const declared = normalizeExclusions([...excludeNodes, ...asArray(page.excludeNodes)]);
+
+  // Which of those the export may actually drop. A required backplate is retained unless its config
+  // entry says `decorative: true` — #437: the five `bg` instances under the Buttons frame were
+  // dropped on an unstated assumption, and four screen-blended component sets were composited
+  // against them, so the specimens came back washed out and the cause looked like a colour bug.
+  const required = findRequiredBackplates(document, declared);
+  const kept = required.filter((entry) => !entry.decorative);
+  const keptIds = new Set(kept.map((entry) => entry.nodeId));
+  for (const entry of kept) {
+    const readers = entry.dependents
+      .slice(0, 3)
+      .map((dependent) => `${dependent.nodeId} (${dependent.blendMode})`)
+      .join(", ");
+    console.log(
+      `${page.id}: RETAINED ${entry.nodeId}${entry.name ? ` "${entry.name}"` : ""} — ` +
+        `${entry.dependents.length} retained layer(s) blend against it: ${readers}` +
+        (entry.dependents.length > 3 ? ", …" : "") +
+        `. Drop it anyway with {"node": "${entry.nodeId}", "decorative": true, "reason": "…"}.`,
+    );
+  }
+  for (const entry of required.filter((entry) => entry.decorative)) {
+    console.log(
+      `${page.id}: pruning ${entry.nodeId} although ${entry.dependents.length} layer(s) blend ` +
+        `against it — declared decorative${entry.reason ? `: ${entry.reason}` : ""}`,
+    );
+  }
+
+  const prunedIds = declared.map((e) => e.nodeId).filter((id) => !keptIds.has(id));
+  let excludedNodeIds = prunedIds;
+  let { svg, removed } = pruneSvgNodes(exportedSvg, excludedNodeIds);
+  let backplatesPruned = false;
+
+  let bytes = Buffer.byteLength(svg, "utf8");
+  if (bytes > maxSvgBytes && keptIds.size > 0) {
+    // Degraded, and recorded as degraded. A retained backplate is usually the page's heaviest
+    // subtree, so honouring the cap and honouring the blend can genuinely conflict; dropping the
+    // page entirely would cost every component on it its node ids, its hotspots and its swap. So
+    // the backdrop goes, the page stays, and `backplatesPruned` says on the manifest that this
+    // sheet's blended content is being read against the section fallback rather than the kit's own
+    // ground — which is what #437 needs to be legible instead of inferred.
+    const all = declared.map((entry) => entry.nodeId);
+    const retry = pruneSvgNodes(exportedSvg, all);
+    const retryBytes = Buffer.byteLength(retry.svg, "utf8");
+    console.log(
+      `${page.id}: WARNING — ${(bytes / 1024 / 1024).toFixed(1)} MB with its backplates retained ` +
+        `exceeds the ${(maxSvgBytes / 1024 / 1024).toFixed(0)} MB cap; publishing at ` +
+        `${(retryBytes / 1024 / 1024).toFixed(1)} MB WITHOUT them. Blended content on this page ` +
+        `will read against the section fallback, not the kit's ground.`,
+    );
+    excludedNodeIds = all;
+    ({ svg, removed } = retry);
+    bytes = retryBytes;
+    backplatesPruned = true;
+  }
+
+  if (bytes > maxSvgBytes) {
+    // Skipped, not thrown: see MAX_SVG_BYTES. Reported at the same level as a successful page so
+    // the run log says which sheets the cache does *not* carry, rather than leaving that to be
+    // inferred from a shorter list.
+    console.log(
+      `${page.id}: SKIPPED — ${(bytes / 1024 / 1024).toFixed(1)} MB SVG exceeds the ` +
+        `${(maxSvgBytes / 1024 / 1024).toFixed(0)} MB cap` +
+        (excludedNodeIds.length > 0 ? ` after ${removed} excluded node(s)` : ""),
+    );
+    return null;
+  }
+
+  const walked = collectNodes(document, {
+    publicSetIds,
+    mappedIds,
+    excludedNodeIds: new Set(excludedNodeIds),
+  });
+  const nodes = limitNodes(walked.map((node) => linkNode(node, { fileKey, byRef })));
+
+  const id = page.id;
+  writeFileSync(path.join(outDir, `${id}.svg`), svg);
+  const components = nodes.filter(
+    (node) =>
+      node.inventory !== false &&
+      node.type !== "COMPONENT_SET" &&
+      !(node.type === "INSTANCE" && node.link === "unlinked"),
+  );
+  const linked = components.filter((node) => node.link !== "unlinked").length;
+  console.log(
+    `${id}: ${(svg.length / 1024).toFixed(0)} KB SVG, ${countNodeIds(svg)} addressable nodes, ` +
+      `${linked}/${components.length} public components linked, ${nodes.length} nodes recorded` +
+      // The kit's biggest sheets hold thousands of components, and both this walk and the server
+      // stop at 500. Say so on the page it happens to: a truncated sheet still renders whole, and
+      // the missing rows are only visible as an absence otherwise.
+      (walked.length > MAX_NODES ? ` (truncated at the ${MAX_NODES}-node cap)` : "") +
+      (removed > 0 ? `, ${removed} excluded node${removed === 1 ? "" : "s"}` : ""),
+  );
+
+  return {
+    id,
+    name: String(page.name ?? document.name ?? id),
+    nodeId,
+    frame: frameOf(svg),
+    image: { uri: `${id}.svg`, format: "svg" },
+    // `nodes`, NOT `placements`. This is the contract's field name
+    // (`DesignPage.nodes` in compose-ai-tools' `DesignPages.kt`, read by
+    // `emit-design-pages.mjs`), and getting it wrong is silent: the page still
+    // publishes, still renders its sheet, and simply has nothing addressable on
+    // it — no outlines, no swap, no click-through. The first real import wrote
+    // `placements` and produced exactly that.
+    nodes,
+    ...(nodes.some((node) => node.inventory !== false) ? {} : { inventory: false }),
+    ...(backplatesPruned ? { backplatesPruned: true } : {}),
+  };
+}
+
+/**
+ * One walked node with its `design-map.json` join attached.
+ *
+ * Split out of the import so `--relink` can recompute the join from the committed cache using the
+ * same function the import uses. The decoration is replaced rather than merged, so a node that
+ * stopped being mapped also loses the stale code and preview ids from the previous run.
+ */
+export function linkNode(node, { fileKey, byRef }) {
+  const { code: _c, previewId: _p, confidence: _f, link: _l, ref: _r, ...bare } = node;
+  const ref = `figma:${fileKey}/${bare.nodeId}`;
+  const mapped = byRef.get(ref);
+  return {
+    ...bare,
+    ref,
+    link: mapped ? "manifest" : "unlinked",
+    ...(mapped?.code ? { code: mapped.code } : {}),
+    ...(mapped?.previewId ? { previewId: mapped.previewId } : {}),
+    ...(mapped ? { confidence: "high" } : {}),
+  };
+}
+
+/** Recompute the cached page join without contacting or modifying Figma. */
+function relink({ fileKey, byRef, outDir, check = false }) {
+  const cached = readCachedPages(outDir);
+  if (cached.length === 0) {
+    console.error(`import-figma-pages: nothing cached in ${outDir} to relink`);
+    process.exit(1);
+  }
+
+  let total = 0;
+  let linked = 0;
+  let moved = 0;
+  const pages = cached.map((page) => {
+    const nodes = (page.nodes ?? []).map((node) => linkNode(node, { fileKey, byRef }));
+    const hits = nodes.filter((node) => node.link !== "unlinked").length;
+    const was = (page.nodes ?? []).filter((node) => node.link !== "unlinked").length;
+    total += nodes.length;
+    linked += hits;
+    moved += hits === was ? 0 : 1;
+    const drift = hits === was ? "" : ` (was ${was})`;
+    console.log(`${page.id}: ${hits}/${nodes.length} nodes linked${drift}`);
+    return { ...page, nodes };
+  });
+
+  const file = path.join(outDir, "pages.json");
+  const contents = `${JSON.stringify({ version: PAGES_VERSION, source: "figma", fileKey, pages }, null, 2)}\n`;
+  if (check) {
+    if (readFileSync(file, "utf8") === contents) {
+      console.log(`import-figma-pages: the page join is up to date (${linked}/${total} nodes)`);
+      return;
+    }
+    console.error(
+      `import-figma-pages: ${file} is stale — ${moved} page(s) would change, and the join would ` +
+        `be ${linked}/${total} nodes. Run \`node scripts/import-figma-pages.mjs --relink\` and ` +
+        `commit the result. No Figma token is needed.`,
+    );
+    process.exit(1);
+  }
+
+  writeFileSync(file, contents);
+  console.log(
+    `import-figma-pages: relinked ${pages.length} cached page(s) — ${linked}/${total} nodes now ` +
+      `join to code, from ${byRef.size} mapped reference(s).`,
+  );
+}
+
+async function main() {
+  const config = JSON.parse(readFileSync(configPath, "utf8"));
+
+  // The join is a pure projection of two committed files, so contributors and CI can refresh or
+  // verify it without a Figma credential. A real page import below remains read-only against Figma.
+  if (relinkOnly || checkOnly) {
+    relink({
+      fileKey: config.fileKey,
+      byRef: readDesignMap(designMapPath),
+      outDir: arg("out", config.outDir ?? "design/pages"),
+      check: checkOnly,
+    });
+    return;
+  }
+
+  if (!token) {
+    console.error("FIGMA_TOKEN is not set. A read-only PAT with `file_content:read` is enough.");
+    process.exit(1);
+  }
+
+  if (config.enabled !== true) {
+    console.log(`import-figma-pages: ${configPath} is not enabled; nothing to do`);
+    return;
+  }
+  const fileKey = config.fileKey;
+  if (typeof fileKey !== "string" || fileKey === "") {
+    console.error(`import-figma-pages: ${configPath} names no fileKey`);
+    process.exit(2);
+  }
+  const outDir = path.resolve(config.outDir || "design/pages");
+  const maxSvgBytes = Number.isFinite(config.maxSvgBytes) ? config.maxSvgBytes : MAX_SVG_BYTES;
+
+  // One request for the whole page list — the same call `design-parity-pages list` makes. Only made
+  // when the config asks for discovery, so a repo that wants a hand-kept list still costs two calls
+  // per page and nothing else.
+  let discovered = [];
+  if (config.discover === true) {
+    const doc = await figma(`/v1/files/${fileKey}?depth=1`);
+    discovered = (doc?.document?.children ?? [])
+      .filter((node) => node?.type === "CANVAS")
+      .map((node) => ({ nodeId: canonicalNodeId(node.id), name: String(node.name ?? "") }));
+    console.log(`import-figma-pages: the file declares ${discovered.length} page(s)`);
+  }
+
+  const resolved = resolvePages({
+    pins: config.pages ?? [],
+    discovered,
+    exclude: config.exclude ?? [],
+  });
+  const wanted = resolved.filter((p) => !onlyPage || p.id === onlyPage);
+  if (wanted.length === 0) {
+    console.error(
+      onlyPage
+        ? `import-figma-pages: no page is called ${onlyPage}`
+        : `import-figma-pages: ${configPath} declares no pages to import`,
+    );
+    process.exit(2);
+  }
+
+  const byRef = readDesignMap(designMapPath);
+  const publicSetIds = readPublicSetIds(kitIndexPath, fileKey);
+  const mappedIds = mappedNodeIds(byRef, fileKey);
+  mkdirSync(outDir, { recursive: true });
+
+  const pages = [];
+  const skipped = [];
+  for (const page of wanted) {
+    // A PINNED page's failure still fails the run: it is in the config because a human put it
+    // there, and a broken node id must not quietly shrink the cache to nothing.
+    //
+    // A DISCOVERED page's failure is a skip. Discovery imports whatever the file happens to hold,
+    // and the kit holds pages Figma itself declines to export — `/v1/images` answers with no url
+    // for at least one of them. Aborting there would mean one unrenderable sheet costs the other
+    // thirty their import, which is precisely the fragility discovery exists to remove.
+    try {
+      const imported = await importPage(page, {
+        fileKey,
+        byRef,
+        publicSetIds,
+        mappedIds,
+        outDir,
+        maxSvgBytes,
+        excludeNodes: asArray(config.excludeNodes),
+      });
+      if (imported) pages.push(imported);
+      else skipped.push(page.id);
+    } catch (error) {
+      if (page.pinned) throw error;
+      console.log(`${page.id}: SKIPPED — ${error.message}`);
+      skipped.push(page.id);
+    }
+  }
+  // Every page failing is not a partial result, it is an outage — an expired token, a file that
+  // moved, Figma down. Reporting "refreshed 0 page(s)" and exiting 0 would let the workflow commit
+  // an emptied cache over a good one.
+  if (pages.length === 0) {
+    console.error(`import-figma-pages: no page imported (${skipped.length} skipped)`);
+    process.exit(1);
+  }
+
+  // `--page` refreshes ONE page without discarding the rest of the cache. Rewriting the manifest
+  // from just what this run fetched would silently delete the others' entries while leaving their
+  // SVGs on disk — a cache that disagrees with itself. Order follows the resolved page list, so the
+  // manifest diffs cleanly however the run was scoped.
+  const merged = new Map(readCachedPages(outDir).map((page) => [page.id, page]));
+  for (const page of pages) merged.set(page.id, page);
+  // A page that has just been refused for its size must lose its cached entry *and* its export.
+  // Keeping either would leave the cache advertising a sheet this run deliberately declined to
+  // carry, and the delivery branch would publish the stale bytes forever.
+  for (const id of skipped) {
+    merged.delete(id);
+    rmSync(path.join(outDir, `${id}.svg`), { force: true });
+  }
+  const ordered = resolved.map((p) => merged.get(p.id)).filter(Boolean);
+  if (!onlyPage) {
+    for (const name of stalePageSvgNames(readdirSync(outDir), resolved.map((page) => page.id))) {
+      rmSync(path.join(outDir, name), { force: true });
+    }
+  }
+
+  writeFileSync(
+    path.join(outDir, "pages.json"),
+    `${JSON.stringify({ version: PAGES_VERSION, source: "figma", fileKey, pages: ordered }, null, 2)}\n`,
+  );
+  console.log(
+    `import-figma-pages: refreshed ${pages.length} of ${ordered.length} page(s) in ` +
+      `${path.relative(".", outDir)}` +
+      (skipped.length > 0 ? `; skipped ${skipped.length} (${skipped.join(", ")})` : ""),
+  );
+}
+
+// Only when run as a script: `resolvePages` and `slugForPage` are pure and unit-tested
+// (`import-figma-pages.test.mjs`), and importing this module must not start talking to Figma.
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  await main();
+}

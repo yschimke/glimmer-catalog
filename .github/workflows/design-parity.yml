@@ -1,0 +1,47 @@
+name: Design parity
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 5 * * 1'
+  workflow_dispatch:
+    inputs:
+      design_parity_ref:
+        description: Test an unreleased yschimke/design-parity ref.
+        type: string
+        required: false
+        default: ''
+
+permissions: {}
+
+concurrency:
+  group: design-parity-artifacts
+  cancel-in-progress: false
+
+jobs:
+  parity:
+    name: Glimmer Design Kit
+    if: ${{ github.repository == 'yschimke/glimmer-catalog' }}
+    uses: yschimke/design-parity/.github/workflows/design-parity-reusable.yml@main
+    permissions:
+      contents: write
+    with:
+      module: ':catalog'
+      publication-repository: yschimke/glimmer-catalog-out
+      artifact-branch: design-parity/main
+      reference-cache-branch: design-parity/reference
+      cache-paths: >-
+        catalog gradle build.gradle.kts settings.gradle.kts
+        design-map.json figma-kit-index.json scripts/parity-prepare.sh
+      force-refresh: ${{ github.event_name == 'schedule' }}
+      design-parity-ref: ${{ inputs.design_parity_ref || '' }}
+      desktop-render: false
+      block-on-verdict: false
+      design-map-command: scripts/parity-prepare.sh
+      shards: 1
+      render-timeout: 1800
+      timeout-minutes: 60
+    secrets:
+      figma-token: ${{ secrets.FIGMA_TOKEN }}
+      publication-token: ${{ secrets.ARTIFACTS_TOKEN }}

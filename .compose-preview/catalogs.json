@@ -1,0 +1,15 @@
+{
+  "$comment": "Catalog registry for preview.coo.ee when it nominates yschimke/glimmer-catalog.",
+  "groups": [
+    { "id": "design-systems", "heading": "Design systems", "priority": 10 },
+    { "id": "androidx-samples", "heading": "AndroidX samples", "priority": 5 }
+  ],
+  "catalogs": [
+    { "system": "glimmer-catalog", "group": "design-systems" },
+    {
+      "system": "glimmer-samples",
+      "group": "androidx-samples",
+      "attributionRepos": ["androidx/androidx"]
+    }
+  ]
+}

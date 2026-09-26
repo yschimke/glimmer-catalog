@@ -1,0 +1,36 @@
+name: Design parity reference cache
+
+on:
+  schedule:
+    - cron: '30 4 * * *'
+  workflow_dispatch:
+    inputs:
+      design_parity_ref:
+        description: Test an unreleased yschimke/design-parity ref.
+        type: string
+        required: false
+        default: ''
+
+permissions: {}
+
+concurrency:
+  group: design-parity-reference-import
+  cancel-in-progress: false
+
+jobs:
+  import:
+    name: Glimmer Design Kit
+    if: ${{ github.repository == 'yschimke/glimmer-catalog' }}
+    uses: yschimke/design-parity/.github/workflows/design-parity-import-reusable.yml@main
+    permissions:
+      contents: write
+    with:
+      design-parity-ref: ${{ inputs.design_parity_ref || '' }}
+      publication-repository: yschimke/glimmer-catalog-out
+      cache-branch: design-parity/reference
+      prune: false
+      design-map-command: test -s design-map.json
+      timeout-minutes: 60
+    secrets:
+      figma-token: ${{ secrets.FIGMA_TOKEN }}
+      publication-token: ${{ secrets.ARTIFACTS_TOKEN }}
