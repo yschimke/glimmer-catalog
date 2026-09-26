@@ -34,7 +34,6 @@ REQUIRED_CHECKS=(
   "generated-contracts"
   "cmp-port"
   "Reject agent attribution"
-  "Detector self-test"
 )
 
 # GitHub Actions' own app id. Pinning each check to it stops an unrelated

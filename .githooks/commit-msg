@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 
 message_file="$1"
 subject="$(grep -v '^#' "$message_file" | sed -n '1{/^$/d;p;q;}')"
-if ! printf '%s' "$subject" | grep -Eq '^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([^)]+\))?!?: .+'; then
+scan="$(git rev-parse --show-toplevel)/.github/scripts/agent-attribution-scan.sh"
+
+"$scan" --text-file "$message_file" \
+  --ident author "$(git var GIT_AUTHOR_IDENT)" \
+  --ident committer "$(git var GIT_COMMITTER_IDENT)" || exit 1
+
+case "$subject" in
+  Merge\ *|Revert\ *|fixup!\ *|squash!\ *|amend!\ *) exit 0 ;;
+esac
+
+conv_re='^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([^)]+\))?!?: .+'
+if ! printf '%s' "$subject" | grep -Eq "$conv_re"; then
   echo "commit-msg hook: use a Conventional Commit subject" >&2
   exit 1
 fi
-
-.github/scripts/agent-attribution-scan.sh --text-file "$message_file" \
-  --ident author "$(git var GIT_AUTHOR_IDENT)" \
-  --ident committer "$(git var GIT_COMMITTER_IDENT)"
