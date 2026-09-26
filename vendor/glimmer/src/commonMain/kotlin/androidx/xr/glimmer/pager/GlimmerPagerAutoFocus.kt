@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusTargetModifierNode
 import androidx.compose.ui.focus.Focusability
 import androidx.compose.ui.focus.requestFocusForChildInRootBounds
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.indirect.IndirectPointerEvent
 import androidx.compose.ui.input.indirect.IndirectPointerInputModifierNode
 import androidx.compose.ui.input.key.KeyEvent
@@ -32,6 +31,7 @@ import androidx.compose.ui.input.rotary.RotaryScrollEvent
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.node.DelegatingNode
 import androidx.compose.ui.node.LayoutModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
@@ -130,6 +130,8 @@ private class PagerAutoFocusNode(private var state: GlimmerPagerState) :
     }
 
     private fun requestPageFocus() {
+        // CMP-PORT: Compose Multiplatform does not yet expose the local-bounds API. Convert the
+        // alpha20 rectangle to root coordinates, matching Glimmer's alpha19 implementation.
         val coordinates = requireLayoutCoordinates()
         val rootTopLeft = coordinates.localToRoot(Offset.Zero)
 

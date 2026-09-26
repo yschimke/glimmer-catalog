@@ -72,6 +72,8 @@ internal class StackInitialFocusNode(private var stackState: StackState) :
 
     override fun applyFocusProperties(focusProperties: FocusProperties) {
         focusProperties.onEnter = {
+            // CMP-PORT: Compose Multiplatform does not yet expose the local-bounds API. Convert
+            // the alpha20 rectangle to root coordinates, matching Glimmer's alpha19 behavior.
             val coordinates = requireLayoutCoordinates()
             val offset = coordinates.localToRoot(Offset.Zero)
             val left = offset.x.roundToInt()

@@ -1,7 +1,7 @@
 {
   "$comment": "The port is imported from the release's published sources jar, not androidx-main. Published CMP versions are <release>-cmp<portRevision> and immutable.",
-  "release": "1.0.0-alpha19",
-  "source": "https://dl.google.com/dl/android/maven2/androidx/xr/glimmer/glimmer/1.0.0-alpha19/glimmer-1.0.0-alpha19-sources.jar",
-  "sha256": "434580adc36ec864b14d7c722f829605d17c7bd87a966f13e68c4141ff40e8fa",
+  "release": "1.0.0-alpha20",
+  "source": "https://dl.google.com/dl/android/maven2/androidx/xr/glimmer/glimmer/1.0.0-alpha20/glimmer-1.0.0-alpha20-sources.jar",
+  "sha256": "d920d3900f83c76d3d3f1759d70f0ccd9b41db59b061a84c862a355c6b664250",
   "portRevision": 1
 }

@@ -20,12 +20,12 @@ platform, frame, shelves, theme roles, and native/wasm fidelity declaration.
 
 ## Compose Multiplatform port
 
-[`vendor/glimmer`](vendor/README.md) carries the exact AndroidX Glimmer alpha19 sources jar and
+[`vendor/glimmer`](vendor/README.md) carries the exact AndroidX Glimmer alpha20 sources jar and
 compiles it for Compose Multiplatform (`jvm()` and `wasmJs`). The only visual change is the Android
 AGSL surface: common targets use Glimmer's own pre-API-33 solid-border fallback. The remaining edits
 remove Android/JVM-only types and expressions without changing the component API or layout.
 
-The port publishes as `ee.schimke.glimmercmp:glimmer:1.0.0-alpha19-cmp01` to the
+The port publishes as `ee.schimke.glimmercmp:glimmer:1.0.0-alpha20-cmp01` to the
 `glimmer-cmp-maven` branch of `yschimke/glimmer-catalog-out`. The catalogs deliberately keep using
 the released AAR; `:glimmer-desktop` proves the fork renders through Skiko without Android or
 Robolectric.

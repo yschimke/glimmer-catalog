@@ -457,11 +457,13 @@ private class ButtonGroupNode(
             rowPlaceable.place(x, 0)
             // Request focus at the scroll position
             if (focusTargetModifierNode.focusState.hasFocus) {
+                // Round once, so the requested area stays a zero-width vertical line.
+                val focusLineX = (totalScroll + x).fastRoundToInt()
                 node.requestFocusForChildInLocalBounds(
-                    left = totalScroll + x,
-                    top = 0f,
-                    right = totalScroll + x,
-                    bottom = rowPlaceable.height.toFloat(),
+                    left = focusLineX,
+                    top = 0,
+                    right = focusLineX,
+                    bottom = rowPlaceable.height,
                 )
             }
         }
@@ -502,12 +504,16 @@ private fun contentOffset(
     val deadSpaceStart = bounds.getOrNull(0)?.center ?: 0f
     val deadSpaceEnd = bounds.lastOrNull()?.let { contentWidth - it.center } ?: 0f
 
-    val scroll =
+    val rawScroll =
         convertUserScrollToContentScroll(
             userScroll = totalScroll - deadSpaceStart,
             viewportWidth = viewportWidth - deadSpaceStart - deadSpaceEnd,
             contentWidth = contentWidth - deadSpaceStart - deadSpaceEnd,
         )
+
+    // When the content fits within the viewport, halve the scroll offset so that as the user
+    // scrolls to the end, the final element shifts to the center rather than scrolling past it.
+    val scroll = if (contentWidth <= viewportWidth) rawScroll / 2f else rawScroll
 
     return -scroll.fastRoundToInt()
 }
@@ -726,26 +732,22 @@ private class GappedMutableIntervalListBuilder<T> {
 private const val ScrollableFocusLineProportionalThresholdFactor = 0.6
 
 /**
- * Attempts to request focus for the most suitable focusable child node that overlaps with the given
- * rect area ([left], [top], [right], [bottom]).
- *
- * The rectangle is interpreted in the coordinate space **relative to the local node's root**.
- *
- * @see requestFocusForChildInRootBounds to request focus for a rect relative to the Compose root
+ * CMP-PORT: Compose Multiplatform does not yet expose requestFocusForChildInLocalBounds, so retain
+ * Glimmer's alpha19-compatible conversion to the public root-bounds API.
  */
 private fun DelegatableNode.requestFocusForChildInLocalBounds(
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
+    left: Int,
+    top: Int,
+    right: Int,
+    bottom: Int,
 ) {
     val rootOrigin = requireLayoutCoordinates().positionInRoot()
-    val x = rootOrigin.x
-    val y = rootOrigin.y
+    val x = rootOrigin.x.fastRoundToInt()
+    val y = rootOrigin.y.fastRoundToInt()
     requestFocusForChildInRootBounds(
-        left = (x + left).fastRoundToInt(),
-        top = (y + top).fastRoundToInt(),
-        right = (x + right).fastRoundToInt(),
-        bottom = (y + bottom).fastRoundToInt(),
+        left = x + left,
+        top = y + top,
+        right = x + right,
+        bottom = y + bottom,
     )
 }
