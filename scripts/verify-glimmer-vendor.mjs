@@ -11,12 +11,17 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const pin = JSON.parse(await readFile(join(root, "vendor/glimmer-upstream.json"), "utf8"));
 const vendored = join(root, "vendor/glimmer/src/commonMain/kotlin");
 const changed = new Set([
+  "androidx/xr/glimmer/AlertDialog.kt",
   "androidx/xr/glimmer/Button.kt",
   "androidx/xr/glimmer/ButtonGroup.kt",
+  "androidx/xr/glimmer/IconMarker.kt",
   "androidx/xr/glimmer/IndirectPointerGesture.kt",
   "androidx/xr/glimmer/Surface.kt",
   "androidx/xr/glimmer/internal/color/HctUtils.kt",
+  "androidx/xr/glimmer/list/GlimmerLazyListAutoFocusState.kt",
+  "androidx/xr/glimmer/pager/GlimmerPagerAutoFocus.kt",
   "androidx/xr/glimmer/stack/DefaultStackItemKey.kt",
+  "androidx/xr/glimmer/stack/StackInitialFocusModifier.kt",
   "androidx/xr/glimmer/stack/StackScrimModifier.kt",
 ]);
 

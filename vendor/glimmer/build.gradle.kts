@@ -27,7 +27,7 @@ publishing {
   publications.withType<MavenPublication>().configureEach {
     pom {
       name.set("Compose Glimmer for Compose Multiplatform")
-      description.set("AndroidX Glimmer 1.0.0-alpha19 ported to Compose Multiplatform")
+      description.set("AndroidX Glimmer 1.0.0-alpha20 ported to Compose Multiplatform")
       url.set("https://github.com/yschimke/glimmer-catalog/tree/main/vendor")
       licenses {
         license {

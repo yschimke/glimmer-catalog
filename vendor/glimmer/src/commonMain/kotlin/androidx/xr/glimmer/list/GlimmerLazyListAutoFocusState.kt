@@ -90,8 +90,8 @@ internal class GlimmerLazyListAutoFocusState {
 }
 
 /**
- * Requests focus at the position along the main-axis where the focus line is, along the entire
- * cross-axis size of the layout node.
+ * CMP-PORT: Compose Multiplatform does not yet expose requestFocusForChildInLocalBounds, so retain
+ * Glimmer's alpha19-compatible conversion to the public root-bounds API.
  */
 private fun DelegatableNode.requestFocusForChildInLocalBounds(
     left: Int,
