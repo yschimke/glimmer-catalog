@@ -72,7 +72,7 @@ private const val QUIET_LEVEL = 0.15f
   reference = "figma:HKfLClZDLRyMhf4IQQLna8/40000116:9346",
   caption = "Shows that the glasses are listening, and how loudly. The kit's two levels fold in.",
 )
-@BuilderComponent(component = "VoiceInputIndicator", nativeOnly = true)
+@BuilderComponent(component = "VoiceInputIndicator", canvas = "glimmer/voice-input-indicator")
 @ee.schimke.m3catalog.glimmer.VoiceInputIndicatorStickerExhaustiveKitCells
 @Preview
 @Composable
@@ -101,7 +101,10 @@ fun QuietVoiceInputIndicatorSticker() = Sticker { VoiceInputIndicator(level = { 
   kitValue = "Yes",
   caption = "The contained form, which carries its own surface.",
 )
-@BuilderComponent(component = "ContainedVoiceInputIndicator", nativeOnly = true)
+@BuilderComponent(
+  component = "ContainedVoiceInputIndicator",
+  canvas = "glimmer/contained-voice-input-indicator",
+)
 @Preview
 @Composable
 fun ContainedVoiceInputIndicatorSticker() = Sticker {

@@ -25,3 +25,20 @@ include(":samples-catalog")
 include(":vendor:glimmer")
 
 include(":glimmer-desktop")
+
+// The catalog-owned UI Builder renderer links the source-only renderer SDK from an immutable
+// compose-ui-builder checkout. Ordinary catalog builds do not see the module or the synthetic
+// coordinate; the Design Artifacts workflow opts in with -PcomposeUiBuilderDir.
+providers.gradleProperty("composeUiBuilderDir").orNull?.let { path ->
+  val directory = file(path).canonicalFile
+  require(directory.resolve("settings.gradle.kts").isFile) {
+    "-PcomposeUiBuilderDir names $directory, which is not a compose-ui-builder Gradle checkout."
+  }
+  includeBuild(directory) {
+    dependencySubstitution {
+      substitute(module("ee.schimke.composeai:ui-builder-renderer-sdk-source"))
+        .using(project(":ui-builder-renderer-sdk"))
+    }
+  }
+  include(":glimmer-ui-builder-renderer")
+}

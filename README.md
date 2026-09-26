@@ -16,7 +16,12 @@ AAR through Robolectric, so their paired images use the same rasterizer.
 
 [`ui-builder.policy.json`](ui-builder.policy.json) publishes the catalog as a glasses UI Builder
 palette. Component records come from discovery of the real Glimmer call sites; the policy owns the
-platform, frame, shelves, theme roles, and native/wasm fidelity declaration.
+platform, frame, shelves, theme roles, and native/wasm fidelity declaration. The catalog-owned
+[`glimmer-ui-builder-renderer`](glimmer-ui-builder-renderer) links the local CMP port into a
+sandboxed Wasm runtime, so the browser canvas invokes the same Glimmer component APIs instead of
+drawing labelled placeholders. Its UI Builder SDK checkout is pinned by
+`glimmer-ui-builder-renderer/compose-ui-builder.ref` and the Design Artifacts workflow publishes the
+verified archive as `ui-builder/runtime.zip`.
 
 ## Compose Multiplatform port
 

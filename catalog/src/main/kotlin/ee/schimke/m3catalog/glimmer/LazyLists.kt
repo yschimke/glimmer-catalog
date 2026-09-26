@@ -47,7 +47,7 @@ private val MeetingTimes =
   reference = "figma:HKfLClZDLRyMhf4IQQLna8/4116:5212",
   caption = "A vertically scrolling Glimmer list with edge scrims and focus-aware snapping.",
 )
-@BuilderComponent(component = "GlimmerLazyColumn", nativeOnly = true)
+@BuilderComponent(component = "GlimmerLazyColumn", canvas = "glimmer/glimmer-lazy-column")
 @Preview
 @Composable
 fun GlimmerLazyColumnSticker() = Sticker {
@@ -61,7 +61,7 @@ fun GlimmerLazyColumnSticker() = Sticker {
   props = ["Title=True"],
   caption = "Keeps a title chip above the scrolling items.",
 )
-@BuilderComponent(component = "GlimmerLazyColumn", nativeOnly = true)
+@BuilderComponent(component = "GlimmerLazyColumn", canvas = "glimmer/glimmer-lazy-column")
 @Preview
 @Composable
 fun GlimmerLazyColumnWithTitleSticker() = Sticker {

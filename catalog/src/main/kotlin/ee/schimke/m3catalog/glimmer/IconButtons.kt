@@ -27,7 +27,7 @@ import ee.schimke.composeai.preview.CatalogVariant
   reference = "figma:HKfLClZDLRyMhf4IQQLna8/5315:4651",
   caption = "An action carried by its icon alone.",
 )
-@BuilderComponent(component = "IconButton", nativeOnly = true)
+@BuilderComponent(component = "IconButton", canvas = "glimmer/icon-button")
 @GlimmerStates
 @Preview
 @Composable
@@ -48,7 +48,11 @@ fun IconButtonSticker() = Sticker {
   reference = "figma:HKfLClZDLRyMhf4IQQLna8/40000113:4150",
   caption = "An icon button that holds its checked state.",
 )
-@BuilderComponent(component = "IconToggleButton", nativeOnly = true)
+@BuilderComponent(
+  component = "IconToggleButton",
+  canvas = "glimmer/icon-toggle-button",
+  stateCallbacks = ["onCheckedChange=checked:boolean"],
+)
 @GlimmerStates
 @ee.schimke.m3catalog.glimmer.IconToggleButtonStickerExhaustiveKitCells
 @Preview

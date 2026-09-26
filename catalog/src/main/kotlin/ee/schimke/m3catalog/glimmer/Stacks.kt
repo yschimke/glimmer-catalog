@@ -26,7 +26,7 @@ import ee.schimke.composeai.preview.CatalogGroup
   caption =
     "Layers focusable content in depth, scaling and revealing the items behind the front one.",
 )
-@BuilderComponent(component = "VerticalStack", nativeOnly = true)
+@BuilderComponent(component = "VerticalStack", canvas = "glimmer/vertical-stack")
 @Preview
 @Composable
 fun VerticalStackSticker() = Sticker {
