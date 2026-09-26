@@ -26,9 +26,10 @@
       "automerge": false
     },
     {
-      "description": "The compose-ai-tools Gradle plugin and runtime artifacts move together.",
+      "description": "The compose-ai-tools Gradle plugin and runtime artifacts move together and are released outside the normal weekly dependency window.",
       "matchPackageNames": ["ee.schimke.composeai.preview", "/^ee\\.schimke\\.composeai:/"],
-      "groupName": "compose-preview"
+      "groupName": "compose-preview",
+      "schedule": ["at any time"]
     }
   ]
 }
