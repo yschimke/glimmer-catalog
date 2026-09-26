@@ -45,7 +45,7 @@ import ee.schimke.composeai.preview.CatalogVariant
   reference = "figma:HKfLClZDLRyMhf4IQQLna8/416:2700",
   caption = "A surface for a unit of content. Header image, title, subtitle and the icon slots.",
 )
-@BuilderComponent(component = "Card", nativeOnly = true)
+@BuilderComponent(component = "Card", canvas = "glimmer/card")
 @Preview
 @Composable
 fun CardSticker() = Sticker {
@@ -101,7 +101,7 @@ fun CardTrailingIconSticker() = Sticker {
   props = ["content=action"],
   caption = "The kit's action layer, which alpha19 puts on `ActionCard` rather than on `Card`.",
 )
-@BuilderComponent(component = "ActionCard", nativeOnly = true)
+@BuilderComponent(component = "ActionCard", canvas = "glimmer/action-card")
 @Preview
 @Composable
 fun CardActionSticker() = Sticker {
@@ -126,6 +126,7 @@ fun CardActionSticker() = Sticker {
   reference = "figma:HKfLClZDLRyMhf4IQQLna8/5315:4722",
   caption = "Labels the content it sits above. Carries its own leading-icon slot.",
 )
+@BuilderComponent(component = "TitleChip", canvas = "glimmer/title-chip")
 @Preview
 @Composable
 fun TitleChipSticker() = Sticker {

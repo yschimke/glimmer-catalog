@@ -43,7 +43,7 @@ import ee.schimke.composeai.preview.CatalogVariant
   reference = "figma:HKfLClZDLRyMhf4IQQLna8/40:660",
   caption = "The primary action. Two sizes, the icon slots and the kit's states fold in.",
 )
-@BuilderComponent(component = "Button", nativeOnly = true)
+@BuilderComponent(component = "Button", canvas = "glimmer/button")
 @GlimmerStates
 @Preview
 @Composable
@@ -116,7 +116,11 @@ fun ButtonTrailingIconSticker() = Sticker {
   reference = "figma:HKfLClZDLRyMhf4IQQLna8/40000113:3991",
   caption = "A button that holds its state. The corner morphs between checked and unchecked.",
 )
-@BuilderComponent(component = "ToggleButton", nativeOnly = true)
+@BuilderComponent(
+  component = "ToggleButton",
+  canvas = "glimmer/toggle-button",
+  stateCallbacks = ["onCheckedChange=checked:boolean"],
+)
 @GlimmerStates
 @ee.schimke.m3catalog.glimmer.ToggleButtonStickerExhaustiveKitCells
 @Preview

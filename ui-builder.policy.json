@@ -1,14 +1,14 @@
 {
   "$schema": "https://raw.githubusercontent.com/yschimke/compose-ai-tools/main/scripts/design-artifacts/ui-builder.policy.schema.json",
-  "$comment": "Compose Glimmer as a UI Builder palette. Component records are discovered from the real Glimmer call sites rendered by the catalog; this file owns only catalog-level policy.",
+  "$comment": "Compose Glimmer as a UI Builder palette. Component records and their canvas adapters are discovered from the real Glimmer call sites rendered by the catalog; this file owns catalog-level policy and disambiguates the nested Text and Icon calls that have no sticker of their own.",
   "schema": "compose-ui-builder-policy/v1",
   "componentIdPrefix": "glimmer/",
   "platform": "glasses",
   "platformLabel": "Glasses",
   "previewSurfaces": {
     "wasm": {
-      "fidelity": "approximate",
-      "reason": "The builder canvas does not yet link this repository's CMP Glimmer port, so components are represented by catalog-aware placeholders."
+      "fidelity": "authoritative",
+      "reason": "The catalog-owned Wasm renderer links this repository's pinned CMP Glimmer port and invokes the real Glimmer composables."
     },
     "native": {
       "fidelity": "authoritative",
@@ -44,6 +44,14 @@
   },
   "builtins": {},
   "components": {
+    "glimmer/icon": {
+      "record": "catalog/androidx.xr.glimmer.IconKt.Icon",
+      "canvas": "glimmer/icon"
+    },
+    "glimmer/text": {
+      "record": "catalog/androidx.xr.glimmer.TextKt.Text",
+      "canvas": "glimmer/text"
+    },
     "glimmer/sticker": {
       "excluded": "The catalog's own preview frame is not a Glimmer library component."
     }

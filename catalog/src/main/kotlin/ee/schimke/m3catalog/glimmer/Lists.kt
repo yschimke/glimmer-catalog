@@ -45,7 +45,7 @@ import ee.schimke.composeai.preview.CatalogVariant
   reference = "figma:HKfLClZDLRyMhf4IQQLna8/384:4195",
   caption = "One row of a list. The supporting label, icon slots and the kit's states fold in.",
 )
-@BuilderComponent(component = "ListItem", nativeOnly = true)
+@BuilderComponent(component = "ListItem", canvas = "glimmer/list-item")
 @GlimmerInteractionStates
 @Preview
 @Composable

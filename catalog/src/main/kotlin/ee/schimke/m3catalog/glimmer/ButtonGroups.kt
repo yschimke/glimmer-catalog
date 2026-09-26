@@ -26,7 +26,7 @@ import ee.schimke.composeai.preview.CatalogGroup
   reference = "figma:HKfLClZDLRyMhf4IQQLna8/40000116:6497",
   caption = "A horizontally scrolling set of buttons that enlarges and centers the focused item.",
 )
-@BuilderComponent(component = "ButtonGroup", nativeOnly = true)
+@BuilderComponent(component = "ButtonGroup", canvas = "glimmer/button-group")
 @Preview
 @Composable
 fun ButtonGroupSticker() = Sticker {

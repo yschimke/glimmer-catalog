@@ -15,6 +15,7 @@ on:
     paths:
       - 'catalog/**'
       - 'ui-builder.policy.json'
+      - 'glimmer-ui-builder-renderer/**'
       - 'samples-catalog/**'
       - 'design-map.json'
       - 'design-map-variants.json'
@@ -38,6 +39,21 @@ permissions:
   contents: read
 
 jobs:
+  renderer-pin:
+    name: renderer pin
+    if: ${{ github.repository == 'yschimke/glimmer-catalog' }}
+    runs-on: ubuntu-latest
+    outputs:
+      ref: ${{ steps.pin.outputs.ref }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          sparse-checkout: glimmer-ui-builder-renderer/compose-ui-builder.ref
+          sparse-checkout-cone-mode: false
+      - id: pin
+        run: >-
+          echo "ref=$(tr -d '[:space:]' < glimmer-ui-builder-renderer/compose-ui-builder.ref)" >> "$GITHUB_OUTPUT"
+
   ui-builder-contract:
     name: Released plugin discovers the UI Builder palette
     if: ${{ github.repository == 'yschimke/glimmer-catalog' }}
@@ -59,7 +75,7 @@ jobs:
   glimmer-catalog:
     name: glimmer-catalog
     if: ${{ github.repository == 'yschimke/glimmer-catalog' }}
-    needs: ui-builder-contract
+    needs: [renderer-pin, ui-builder-contract]
     permissions:
       contents: write
     concurrency:
@@ -86,6 +102,9 @@ jobs:
       render-timeout: 1800
       render-shards: 1
       allow-incomplete: ${{ github.event_name == 'workflow_dispatch' && inputs.allow_incomplete }}
+      ui-builder-runtime-task: ':glimmer-ui-builder-renderer:rendererArchive'
+      ui-builder-runtime-archive: 'glimmer-ui-builder-renderer/build/distributions/glimmer-ui-builder-renderer.zip'
+      ui-builder-runtime-source-ref: ${{ needs.renderer-pin.outputs.ref }}
     secrets:
       artifacts_token: ${{ secrets.ARTIFACTS_TOKEN }}
       figma_token: ${{ secrets.FIGMA_TOKEN }}
