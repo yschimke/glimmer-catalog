@@ -31,6 +31,22 @@ function textNodes(data) {
   return out;
 }
 
+/**
+ * The previews that lay out text. IconButtons and VoiceInput are glyph-only and write an empty
+ * fonts-used. A checker at or after yschimke/compose-ai-tools#5643 skips those on its own, judged
+ * from their semantics; this scope keeps the two text rules correct on the pinned driver before
+ * that, and can go once the pin carries it.
+ */
+const TEXT_BEARING = [
+  "*.ButtonGroupsKt.*",
+  "*.ButtonsKt.*",
+  "*.CardsKt.*",
+  "*.GlimmerEnvironmentsKt.*",
+  "*.LazyListsKt.*",
+  "*.ListsKt.*",
+  "*.StacksKt.*",
+];
+
 export const assertions = [
   {
     id: "glimmer-types-in-google-sans-flex",
@@ -38,6 +54,7 @@ export const assertions = [
     because:
       "every text layer in the Glimmer UI kit is Google Sans Flex; any other family on a text node " +
       "means the downloadable face silently fell back and the sheet no longer shows the design system",
+    appliesTo: { previews: TEXT_BEARING },
     require: { "everyTextNode.typography.fontFamily": "Google Sans Flex" },
   },
   {
@@ -66,6 +83,7 @@ export const assertions = [
     because:
       "the rule above only proves the axes were REQUESTED; a static font instance drops them and " +
       "every role renders at 400 — the exact bug this file was written for",
+    appliesTo: { previews: TEXT_BEARING },
     require: { "noFont.droppedVariationSettings": null },
   },
 ];
