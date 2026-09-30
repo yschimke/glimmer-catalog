@@ -87,6 +87,9 @@ jobs:
       artifact-repository: yschimke/glimmer-catalog-out
       spec: catalog.spec.json
       module: ':catalog'
+      # Properties every render must hold (typeface, kit axis weights, applied axes), checked
+      # against the render's data products before anything publishes. See the file's header.
+      render-assertions: render-assertions.mjs
       # The design map is projected from the annotations by the reusable workflow's own default;
       # every `reference` names a node of the Glimmer UI kit.
       reference-cache-branch: design-parity/reference
