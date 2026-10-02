@@ -27,7 +27,7 @@
     },
     {
       "description": "The compose-ai-tools Gradle plugin and runtime artifacts move together and are released outside the normal weekly dependency window.",
-      "matchPackageNames": ["ee.schimke.composeai.preview", "/^ee\\.schimke\\.composeai:/"],
+      "matchPackageNames": ["ee.schimke.composeai.preview", "/^ee\\.schimke\\.composeai:/", "yschimke/compose-ai-tools"],
       "groupName": "compose-preview",
       "schedule": ["at any time"]
     }
