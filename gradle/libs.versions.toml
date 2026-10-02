@@ -8,7 +8,7 @@ androidx-compose-ui = "1.12.1"
 androidx-compose-material-icons = "1.7.8"
 compose-multiplatform = "1.12.0"
 androidx-annotation = "1.10.0"
-composePreviewPlugin = "2.27.0"
+composePreviewPlugin = "2.32.0"
 composePreviewAnnotations = "3.8.4"
 
 [libraries]
