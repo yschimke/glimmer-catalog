@@ -8,8 +8,11 @@ androidx-compose-ui = "1.12.1"
 androidx-compose-material-icons = "1.7.8"
 compose-multiplatform = "1.12.0"
 androidx-annotation = "1.10.0"
-composePreviewPlugin = "2.32.0"
-composePreviewAnnotations = "3.8.4"
+composePreviewPlugin = "2.32.2"
+composePreviewAnnotations = "3.13.0"
+# compose-preview-daemon publishes only the modules that changed in a release; the 3.13.0 BOM
+# (ee.schimke.composeai:compose-preview-daemon-bom) pins these two data artifacts at 3.12.0.
+composePreviewData = "3.12.0"
 
 [libraries]
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
@@ -26,9 +29,9 @@ androidx-compose-material-icons-extended = { module = "androidx.compose.material
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
-composeai-preview-overrides = { module = "ee.schimke.composeai:data-preview-overrides-runtime", version.ref = "composePreviewAnnotations" }
+composeai-preview-overrides = { module = "ee.schimke.composeai:data-preview-overrides-runtime", version.ref = "composePreviewData" }
 composeai-preview-annotations = { module = "ee.schimke.composeai:preview-annotations", version.ref = "composePreviewAnnotations" }
-composeai-glimmer-environment = { module = "ee.schimke.composeai:data-glimmer-environment-connector", version.ref = "composePreviewAnnotations" }
+composeai-glimmer-environment = { module = "ee.schimke.composeai:data-glimmer-environment-connector", version.ref = "composePreviewData" }
 # Substituted by the compose-ui-builder checkout named with -PcomposeUiBuilderDir; never on Maven.
 composeai-ui-builder-renderer-sdk-source = { module = "ee.schimke.composeai:ui-builder-renderer-sdk-source", version = "source" }
 
