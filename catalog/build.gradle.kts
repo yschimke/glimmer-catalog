@@ -54,6 +54,9 @@ dependencies {
   // artifact, not the Compose Multiplatform republication the desktop modules use.
   implementation(libs.androidx.compose.ui.tooling.preview)
   implementation(libs.androidx.compose.ui.tooling)
+  // The ee.schimke.composeai runtime modules are versionless; the daemon BOM picks each one's
+  // latest published version for the daemon release in gradle/libs.versions.toml.
+  implementation(platform(libs.composeai.daemon.bom))
   implementation(libs.composeai.preview.annotations)
   // `previewOverrideBoolean`, which backs the `clickCount` knob `counted` exposes — the same
   // live-lane contract `:catalog` carries. See GlimmerInteractive.kt.

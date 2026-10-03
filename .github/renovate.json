@@ -26,10 +26,16 @@
       "automerge": false
     },
     {
-      "description": "The compose-ai-tools Gradle plugin and runtime artifacts move together and are released outside the normal weekly dependency window.",
-      "matchPackageNames": ["ee.schimke.composeai.preview", "/^ee\\.schimke\\.composeai:/", "yschimke/compose-ai-tools"],
+      "description": "Every other ee.schimke.composeai coordinate is versionless in gradle/libs.versions.toml and resolved through compose-preview-daemon-bom. The daemon publishes only the modules that changed in a release, so per-module versions diverge from the release version and a direct pin 404s; no rule may pin or bump one. This also disables any direct version that slips back in. The plugin and the BOM are re-enabled by the next rule (last match wins).",
+      "matchPackageNames": ["/^ee\\.schimke\\.composeai:/"],
+      "enabled": false
+    },
+    {
+      "description": "The compose-ai-tools Gradle plugin bakes in a compose-preview-daemon version (plugin 2.32.2 bakes daemon 3.13.0) and composePreviewDaemon must stay equal to it, so the plugin, its reusable actions and the daemon BOM move together in ONE PR, released outside the normal weekly dependency window. Before merging, confirm the daemon version the new plugin bakes and keep the BOM equal to it.",
+      "matchPackageNames": ["/^ee\\.schimke\\.composeai\\.preview($|[.:])/", "ee.schimke.composeai:compose-preview-daemon-bom", "yschimke/compose-ai-tools"],
       "groupName": "compose-preview",
-      "schedule": ["at any time"]
+      "schedule": ["at any time"],
+      "enabled": true
     }
   ]
 }
