@@ -34,3 +34,41 @@ tasks.register("printGlimmerCmpPortVersion") {
   inputs.property("glimmerCmpVersion", glimmerCmpVersion)
   doLast { println(inputs.properties.getValue("glimmerCmpVersion")) }
 }
+
+// composePreviewDaemon (the compose-preview-daemon-bom version every ee.schimke.composeai runtime
+// module resolves through) must equal the daemon release the compose-preview plugin bakes into its
+// jar (`previewDaemon` in plugin-version.properties): the catalogs compile against the same runtime
+// the plugin's renderer hosts. Renovate cannot read that value, so it never moves the BOM on its
+// own
+// (.github/renovate.json); this check is what keeps the two equal when the plugin moves.
+val bakedPreviewDaemonVersion: String =
+  javaClass.classLoader
+    .getResource("ee/schimke/composeai/plugin/plugin-version.properties")
+    ?.openStream()
+    ?.use { java.util.Properties().apply { load(it) } }
+    ?.getProperty("previewDaemon") ?: "<missing from the plugin jar>"
+
+val verifyComposePreviewDaemonAlignment by tasks.registering {
+  group = "verification"
+  description = "Fail when composePreviewDaemon differs from the compose-preview plugin's daemon."
+  val plugin = libs.versions.composePreviewPlugin.get()
+  val catalog = libs.versions.composePreviewDaemon.get()
+  val bakedPreviewDaemon = bakedPreviewDaemonVersion
+  inputs.property("baked", bakedPreviewDaemon)
+  inputs.property("catalog", catalog)
+  doLast {
+    check(bakedPreviewDaemon == catalog) {
+      "gradle/libs.versions.toml has composePreviewDaemon = \"$catalog\", but compose-preview " +
+        "plugin $plugin bakes daemon \"$bakedPreviewDaemon\" (plugin-version.properties). " +
+        "Set composePreviewDaemon = \"$bakedPreviewDaemon\"."
+    }
+  }
+}
+
+subprojects {
+  if (path == ":catalog" || path == ":samples-catalog") {
+    tasks
+      .matching { it.name == "preBuild" }
+      .configureEach { dependsOn(verifyComposePreviewDaemonAlignment) }
+  }
+}

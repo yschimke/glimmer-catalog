@@ -26,16 +26,15 @@
       "automerge": false
     },
     {
-      "description": "Every other ee.schimke.composeai coordinate is versionless in gradle/libs.versions.toml and resolved through compose-preview-daemon-bom. The daemon publishes only the modules that changed in a release, so per-module versions diverge from the release version and a direct pin 404s; no rule may pin or bump one. This also disables any direct version that slips back in. The plugin and the BOM are re-enabled by the next rule (last match wins).",
+      "description": "Every ee.schimke.composeai coordinate, the daemon BOM included, is held back. The runtime modules are versionless in gradle/libs.versions.toml and resolve through compose-preview-daemon-bom, whose version (composePreviewDaemon) must equal the daemon release the compose-preview plugin bakes. The daemon always releases before the plugin that bakes it, and Renovate cannot read the baked value, so an independent BOM update would be ahead of the plugin; grouping or minimumGroupSize would still bump the BOM to the latest daemon, not the baked one. The BOM therefore moves only in the plugin's PR, set by hand to the value :verifyComposePreviewDaemonAlignment (root build.gradle.kts, run by :catalog:preBuild) reports.",
       "matchPackageNames": ["/^ee\\.schimke\\.composeai:/"],
       "enabled": false
     },
     {
-      "description": "The compose-ai-tools Gradle plugin bakes in a compose-preview-daemon version (plugin 2.32.2 bakes daemon 3.13.0) and composePreviewDaemon must stay equal to it, so the plugin, its reusable actions and the daemon BOM move together in ONE PR, released outside the normal weekly dependency window. Before merging, confirm the daemon version the new plugin bakes and keep the BOM equal to it.",
-      "matchPackageNames": ["/^ee\\.schimke\\.composeai\\.preview($|[.:])/", "ee.schimke.composeai:compose-preview-daemon-bom", "yschimke/compose-ai-tools"],
+      "description": "The compose-ai-tools Gradle plugin and its reusable actions move together in one PR, released outside the normal weekly dependency window. When the new plugin bakes a different daemon, that PR fails :verifyComposePreviewDaemonAlignment with the composePreviewDaemon value to set; set it on the same PR.",
+      "matchPackageNames": ["/^ee\\.schimke\\.composeai\\.preview($|[.:])/", "yschimke/compose-ai-tools"],
       "groupName": "compose-preview",
-      "schedule": ["at any time"],
-      "enabled": true
+      "schedule": ["at any time"]
     }
   ]
 }
