@@ -26,8 +26,13 @@
       "automerge": false
     },
     {
-      "description": "The compose-ai-tools Gradle plugin and runtime artifacts move together and are released outside the normal weekly dependency window.",
-      "matchPackageNames": ["ee.schimke.composeai.preview", "/^ee\\.schimke\\.composeai:/", "yschimke/compose-ai-tools"],
+      "description": "Every ee.schimke.composeai coordinate, the daemon BOM included, is held back. The runtime modules are versionless in gradle/libs.versions.toml and resolve through compose-preview-daemon-bom, whose version (composePreviewDaemon) must equal the daemon release the compose-preview plugin bakes. The daemon always releases before the plugin that bakes it, and Renovate cannot read the baked value, so an independent BOM update would be ahead of the plugin; grouping or minimumGroupSize would still bump the BOM to the latest daemon, not the baked one. The BOM therefore moves only in the plugin's PR, set by hand to the value :verifyComposePreviewDaemonAlignment (root build.gradle.kts, run by :catalog:preBuild) reports.",
+      "matchPackageNames": ["/^ee\\.schimke\\.composeai:/"],
+      "enabled": false
+    },
+    {
+      "description": "The compose-ai-tools Gradle plugin and its reusable actions move together in one PR, released outside the normal weekly dependency window. When the new plugin bakes a different daemon, that PR fails :verifyComposePreviewDaemonAlignment with the composePreviewDaemon value to set; set it on the same PR.",
+      "matchPackageNames": ["/^ee\\.schimke\\.composeai\\.preview($|[.:])/", "yschimke/compose-ai-tools"],
       "groupName": "compose-preview",
       "schedule": ["at any time"]
     }
