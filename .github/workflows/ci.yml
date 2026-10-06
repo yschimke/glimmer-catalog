@@ -40,15 +40,20 @@ jobs:
           ref: main
           path: compose-ai-tools
           persist-credentials: false
+      # The validators moved out of compose-ai-tools' scripts/design-artifacts into the
+      # @design-parity/export-driver package. Install it the way the design-artifacts workflows do:
+      # `npm ci` from compose-ai-tools' reviewed lock, which exports DRIVER_DIR.
+      - name: Fetch the export driver (@design-parity/export-driver)
+        run: compose-ai-tools/.github/scripts/install-export-driver.sh "$RUNNER_TEMP/export-driver"
       - name: Validate catalog specs
         run: |
-          node compose-ai-tools/scripts/design-artifacts/validate-catalog-spec.mjs \
+          node "$DRIVER_DIR/validate-catalog-spec.mjs" \
             --spec catalog.spec.json --module-dir catalog
-          node compose-ai-tools/scripts/design-artifacts/validate-catalog-spec.mjs \
+          node "$DRIVER_DIR/validate-catalog-spec.mjs" \
             --spec samples-catalog/catalog.spec.json --module-dir samples-catalog
       - name: Validate UI Builder policy
         run: |
-          node compose-ai-tools/scripts/design-artifacts/validate-ui-builder-policy.mjs \
+          node "$DRIVER_DIR/validate-ui-builder-policy.mjs" \
             --policy ui-builder.policy.json --strict
       - name: Check generated sources and scripts
         run: |
