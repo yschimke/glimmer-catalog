@@ -74,7 +74,14 @@ private val MeetingTimes =
   caption = "A vertically scrolling Glimmer list with edge scrims and focus-aware snapping.",
 )
 @BuilderComponent(component = "GlimmerLazyColumn", canvas = "glimmer/glimmer-lazy-column")
-@OverrideVariant(name = "focused", interaction = VariantInteraction.Focused)
+// The kit draws its base cell with the first item focused, which only the harness can capture.
+// Naming the cell's properties makes this render, not the unfocused base, its parity pair
+// (design-parity kit-index 1.6.0 lets an explicit kitProps variant claim its cell).
+@OverrideVariant(
+  name = "focused",
+  interaction = VariantInteraction.Focused,
+  kitProps = ["List index=Top", "Title=False"],
+)
 @OverrideVariant(
   name = "cell-list-index-mid-title-false-4116-5221",
   strings = ["index=mid"],
@@ -106,7 +113,14 @@ fun GlimmerLazyColumnSticker() = Sticker {
   caption = "Keeps a title chip above the scrolling items.",
 )
 @BuilderComponent(component = "GlimmerLazyColumn", canvas = "glimmer/glimmer-lazy-column")
-@OverrideVariant(name = "focused", interaction = VariantInteraction.Focused)
+// The kit draws its base cell with the first item focused, which only the harness can capture.
+// Naming the cell's properties makes this render, not the unfocused base, its parity pair
+// (design-parity kit-index 1.6.0 lets an explicit kitProps variant claim its cell).
+@OverrideVariant(
+  name = "focused",
+  interaction = VariantInteraction.Focused,
+  kitProps = ["List index=Top", "Title=True"],
+)
 @OverrideVariant(
   name = "cell-list-index-mid-title-true-40000115-1924",
   strings = ["index=mid"],
