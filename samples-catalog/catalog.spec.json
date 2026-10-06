@@ -20,6 +20,21 @@
   },
   "groups": [
     {
+      "name": "AlertDialog",
+      "components": [
+        {
+          "componentId": "AlertDialog/AlertDialogSample",
+          "preview": "AlertDialogSamplePreview",
+          "caption": "`AlertDialogSample` — upstream ships no preview for it, so this catalog's own renders it."
+        },
+        {
+          "componentId": "AlertDialog/AlertDialogConfirmOnlySample",
+          "preview": "AlertDialogConfirmOnlySamplePreview",
+          "caption": "`AlertDialogConfirmOnlySample` — upstream ships no preview for it, so this catalog's own renders it."
+        }
+      ]
+    },
+    {
       "name": "Button",
       "components": [
         {

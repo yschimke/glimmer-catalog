@@ -136,6 +136,30 @@ test("a file whose samples upstream never previews contributes no group", () => 
   assert.deepEqual(buildGroups(dir), []);
 });
 
+test("a wrapper file previews the samples of its vendored counterpart", () => {
+  // `AlertDialogSamples.kt` is the live case: upstream ships the samples and no preview, so a
+  // hand-written `AlertDialogSamplePreviews.kt` outside the vendored tree renders them.
+  const dir = sources({ "AlertDialogSamples.kt": SAMPLE("AlertDialogSample") });
+  const wrappers = sources({
+    "AlertDialogSamplePreviews.kt":
+      "@GlimmerSamplePreview\n@Composable\nprivate fun AlertDialogSamplePreview() {\n" +
+      "  GlimmerTheme { AlertDialogSample() }\n}\n",
+  });
+  assert.deepEqual(buildGroups(dir, new Set(), wrappers), [
+    {
+      name: "AlertDialog",
+      components: [
+        {
+          componentId: "AlertDialog/AlertDialogSample",
+          preview: "AlertDialogSamplePreview",
+          caption:
+            "`AlertDialogSample` — upstream ships no preview for it, so this catalog's own renders it.",
+        },
+      ],
+    },
+  ]);
+});
+
 test("`related` joins on exact name equality, so ButtonGroup does not link to Button", () => {
   const dir = sources({
     "ButtonSamples.kt": SAMPLE("ButtonSample") + PREVIEW("Button", "ButtonSample"),

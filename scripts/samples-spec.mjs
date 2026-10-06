@@ -56,10 +56,16 @@
  *     node scripts/samples-spec.mjs --check    # fail if the committed spec is stale
  */
 
-import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const VENDORED = "samples-catalog/src/main/kotlin/upstream/androidx/xr/glimmer/samples";
+/**
+ * Hand-written previews for vendored samples upstream never previews, kept outside the vendored
+ * tree because those files are upstream's bytes. `<Api>SamplePreviews.kt` here belongs to the
+ * vendored `<Api>Samples.kt` and joins its group; its previews are held to the same shape.
+ */
+const WRAPPERS = "samples-catalog/src/main/kotlin/ee/schimke/m3catalog/glimmersamples";
 const SPEC = "samples-catalog/catalog.spec.json";
 /** The kit catalog these samples are call sites for. */
 const KIT_SYSTEM = "glimmer-catalog";
@@ -143,9 +149,15 @@ function body(text, openBrace) {
  * file. Dropping one is the bad failure here, because the sheet would still publish and still look
  * complete.
  */
-function scan(file, dir) {
+function scan(file, dir, samplesFrom = { file, dir }) {
   const text = readFileSync(join(dir, file), "utf8");
-  const declaredHere = new Set([...text.matchAll(DECLARED)].map((m) => m[1]));
+  // The functions a preview may render: the vendored file's own. A wrapper file outside the
+  // vendored tree (see [WRAPPERS]) renders samples declared in its vendored counterpart.
+  const declaredHere = new Set(
+    [...readFileSync(join(samplesFrom.dir, samplesFrom.file), "utf8").matchAll(DECLARED)].map(
+      (m) => m[1],
+    ),
+  );
   const found = [];
   for (const match of text.matchAll(PREVIEW)) {
     const preview = match[1];
@@ -159,7 +171,7 @@ function scan(file, dir) {
           `(${names.join(", ") || "none"}); a component entry needs exactly one to name.`,
       );
     }
-    found.push({ preview, sample: names[0] });
+    found.push({ preview, sample: names[0], wrapped: file !== samplesFrom.file });
   }
   const declared = [...text.matchAll(ANY_PREVIEW)].length;
   if (found.length !== declared) {
@@ -184,23 +196,31 @@ export function kitComponentIds(dir = KIT_SOURCES) {
   return ids;
 }
 
-export function buildGroups(dir = VENDORED, kitIds = new Set()) {
+export function buildGroups(dir = VENDORED, kitIds = new Set(), wrappers = WRAPPERS) {
   const groups = [];
   for (const file of readdirSync(dir).filter((f) => f.endsWith(".kt")).sort()) {
     const api = apiName(file);
     const kitId = SAMPLE_TO_KIT.get(api) ?? api;
-    const previews = scan(file, dir);
+    const wrapper = `${file.replace(/\.kt$/, "").replace(/Samples?$/, "")}SamplePreviews.kt`;
+    const previews = [
+      ...scan(file, dir),
+      ...(wrappers && existsSync(join(wrappers, wrapper))
+        ? scan(wrapper, wrappers, { file, dir })
+        : []),
+    ];
     // A file whose samples upstream never previews contributes nothing to render, so it
     // contributes no group: an empty `components` is not valid against the schema, and a group
-    // holding one would be a heading over nothing. `VoiceInputIndicatorSamples.kt` and
-    // `AlertDialogSamples.kt` are the cases — their samples exist, their previews do not.
+    // holding one would be a heading over nothing. `VoiceInputIndicatorSamples.kt` is the case —
+    // its sample exists, its preview does not.
     if (previews.length === 0) continue;
     groups.push({
       name: api,
-      components: previews.map(({ preview, sample }) => ({
+      components: previews.map(({ preview, sample, wrapped }) => ({
         componentId: `${api}/${sample}`,
         preview,
-        caption: `\`${sample}\` — the sample upstream's own \`@Preview\` renders.`,
+        caption: wrapped
+          ? `\`${sample}\` — upstream ships no preview for it, so this catalog's own renders it.`
+          : `\`${sample}\` — the sample upstream's own \`@Preview\` renders.`,
         ...(kitIds.has(kitId) ? { related: [{ system: KIT_SYSTEM, componentId: kitId }] } : {}),
       })),
     });
