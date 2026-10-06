@@ -23,9 +23,7 @@
   <string name="meeting_design_check_in">Reunión semanal de diseño</string>
   <string name="meeting_one_to_one">Reunión individual</string>
   <string name="meeting_lunch">Almuerzo</string>
-  <string name="meeting_review">Revisión</string>
   <string name="time_early_morning">8:00 – 8:30</string>
   <string name="time_late_morning">9:00 – 9:30</string>
   <string name="time_midday">12:00 – 13:00</string>
-  <string name="time_afternoon">14:00 – 15:00</string>
 </resources>

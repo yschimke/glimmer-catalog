@@ -45,14 +45,12 @@ private val MeetingLabels =
     R.string.meeting_design_check_in,
     R.string.meeting_one_to_one,
     R.string.meeting_lunch,
-    R.string.meeting_review,
   )
 private val MeetingTimes =
   listOf(
     R.string.time_early_morning,
     R.string.time_late_morning,
     R.string.time_midday,
-    R.string.time_afternoon,
   )
 
 // ## `List index=` is where the focus sits
@@ -67,6 +65,10 @@ private val MeetingTimes =
 //
 // `Bottom` waits for that harness focus to land before it scrolls: the focus request brings the
 // first row into view, and a scroll made before it would be pulled back to the top.
+//
+// The 2-line column holds three rows, as every cell of the kit's `2-line list` set does. Untitled,
+// three rows fit the viewport, so the column does not scroll and has no focus line to move focus;
+// its `Mid` and `Bottom` cells name the row for the harness to focus instead (`interactionIndex`).
 
 @CatalogComponent(
   id = "GlimmerLazyColumn",
@@ -161,6 +163,7 @@ fun GlimmerLazyColumnWithTitleSticker() = Sticker {
   name = "cell-list-index-mid-title-false-4116-5259",
   strings = ["index=mid"],
   interaction = VariantInteraction.Focused,
+  interactionIndex = 1,
   kitProps = ["List index=Mid", "Title=False"],
   secondary = true,
 )
@@ -181,6 +184,7 @@ fun GlimmerLazyColumnWithTitleSticker() = Sticker {
   name = "cell-list-index-bottom-title-false-4116-5267",
   strings = ["index=bottom"],
   interaction = VariantInteraction.Focused,
+  interactionIndex = 2,
   kitProps = ["List index=Bottom", "Title=False"],
   secondary = true,
 )

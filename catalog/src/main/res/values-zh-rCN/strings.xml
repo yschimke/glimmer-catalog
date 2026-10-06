@@ -23,9 +23,7 @@
   <string name="meeting_design_check_in">每周设计例会</string>
   <string name="meeting_one_to_one">一对一沟通</string>
   <string name="meeting_lunch">午餐</string>
-  <string name="meeting_review">评审</string>
   <string name="time_early_morning">上午8:00 – 8:30</string>
   <string name="time_late_morning">上午9:00 – 9:30</string>
   <string name="time_midday">中午12:00 – 下午1:00</string>
-  <string name="time_afternoon">下午2:00 – 3:00</string>
 </resources>

@@ -23,9 +23,7 @@
   <string name="meeting_design_check_in">週次デザインミーティング</string>
   <string name="meeting_one_to_one">1対1ミーティング</string>
   <string name="meeting_lunch">ランチ</string>
-  <string name="meeting_review">レビュー</string>
   <string name="time_early_morning">午前8:00 – 8:30</string>
   <string name="time_late_morning">午前9:00 – 9:30</string>
   <string name="time_midday">午後12:00 – 13:00</string>
-  <string name="time_afternoon">午後14:00 – 15:00</string>
 </resources>

@@ -23,9 +23,7 @@
   <string name="meeting_design_check_in">Point hebdomadaire design</string>
   <string name="meeting_one_to_one">Entretien individuel</string>
   <string name="meeting_lunch">Déjeuner</string>
-  <string name="meeting_review">Revue</string>
   <string name="time_early_morning">08h00 – 08h30</string>
   <string name="time_late_morning">09h00 – 09h30</string>
   <string name="time_midday">12h00 – 13h00</string>
-  <string name="time_afternoon">14h00 – 15h00</string>
 </resources>

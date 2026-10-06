@@ -23,9 +23,7 @@
   <string name="meeting_design_check_in">साप्ताहिक डिज़ाइन बैठक</string>
   <string name="meeting_one_to_one">आमने-सामने बैठक</string>
   <string name="meeting_lunch">दोपहर का भोजन</string>
-  <string name="meeting_review">समीक्षा</string>
   <string name="time_early_morning">सुबह 8:00 – 8:30</string>
   <string name="time_late_morning">सुबह 9:00 – 9:30</string>
   <string name="time_midday">दोपहर 12:00 – 1:00</string>
-  <string name="time_afternoon">दोपहर 2:00 – 3:00</string>
 </resources>
