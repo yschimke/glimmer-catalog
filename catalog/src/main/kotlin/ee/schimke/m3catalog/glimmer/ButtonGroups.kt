@@ -19,10 +19,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.xr.glimmer.Button
 import androidx.xr.glimmer.ButtonGroup
+import androidx.xr.glimmer.ButtonGroupState
 import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.IconToggleButton
 import androidx.xr.glimmer.Text
-import androidx.xr.glimmer.rememberButtonGroupState
 import ee.schimke.composeai.data.overrides.PreviewOverrideOption
 import ee.schimke.composeai.overrides.previewOverrideChoice
 import ee.schimke.composeai.preview.BuilderComponent
@@ -74,7 +74,9 @@ fun ButtonGroupSticker() = Sticker {
   // here rather than being recorded as an unexplained divergence.
   ButtonGroup(
     modifier = Modifier.width(KitContentWidth),
-    state = rememberButtonGroupState(initialItemIndex = initialIndex),
+    // Keyed on the index: a state only reads its initial index once, so a live change of the
+    // `focus` knob needs a fresh one rather than the remembered strip position.
+    state = remember(initialIndex) { ButtonGroupState(initialItemIndex = initialIndex) },
     contentPadding = PaddingValues(horizontal = 16.dp),
   ) {
     repeat(count) {

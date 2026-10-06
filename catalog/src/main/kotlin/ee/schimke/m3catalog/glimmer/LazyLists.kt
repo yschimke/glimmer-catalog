@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Send
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -20,7 +21,6 @@ import androidx.xr.glimmer.Text
 import androidx.xr.glimmer.TitleChip
 import androidx.xr.glimmer.list.GlimmerLazyColumn
 import androidx.xr.glimmer.list.GlimmerLazyListState
-import androidx.xr.glimmer.list.rememberGlimmerLazyListState
 import ee.schimke.composeai.data.overrides.PreviewOverrideOption
 import ee.schimke.composeai.overrides.previewOverrideChoice
 import ee.schimke.composeai.preview.BuilderComponent
@@ -216,7 +216,8 @@ private fun twoLineTitle(): Boolean =
 @Composable
 private fun rememberListAtIndex(count: Int): GlimmerLazyListState {
   val index = listIndex(count)
-  val state = rememberGlimmerLazyListState()
+  // A fresh state per index, so a live change of the knob always measures from the top.
+  val state = remember(index) { GlimmerLazyListState() }
   LaunchedEffect(state, index) {
     when (index) {
       0 -> {}
