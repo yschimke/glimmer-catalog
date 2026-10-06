@@ -140,6 +140,17 @@
               "componentId": "ButtonGroup"
             }
           ]
+        },
+        {
+          "componentId": "ButtonGroup/ButtonGroupControlCurrentItemSample",
+          "preview": "ButtonGroupControlCurrentItemSamplePreview",
+          "caption": "`ButtonGroupControlCurrentItemSample` — upstream ships no preview for it, so this catalog's own renders it.",
+          "related": [
+            {
+              "system": "glimmer-catalog",
+              "componentId": "ButtonGroup"
+            }
+          ]
         }
       ]
     },
@@ -277,6 +288,61 @@
               "componentId": "ImageCard"
             }
           ]
+        },
+        {
+          "componentId": "Card/ClickableCardSample",
+          "preview": "ClickableCardSamplePreview",
+          "caption": "`ClickableCardSample` — upstream ships no preview for it, so this catalog's own renders it.",
+          "related": [
+            {
+              "system": "glimmer-catalog",
+              "componentId": "ImageCard"
+            }
+          ]
+        },
+        {
+          "componentId": "Card/ClickableCardWithTrailingIconSample",
+          "preview": "ClickableCardWithTrailingIconSamplePreview",
+          "caption": "`ClickableCardWithTrailingIconSample` — upstream ships no preview for it, so this catalog's own renders it.",
+          "related": [
+            {
+              "system": "glimmer-catalog",
+              "componentId": "ImageCard"
+            }
+          ]
+        },
+        {
+          "componentId": "Card/ClickableCardWithTitleAndSubtitleAndLeadingIconSample",
+          "preview": "ClickableCardWithTitleAndSubtitleAndLeadingIconSamplePreview",
+          "caption": "`ClickableCardWithTitleAndSubtitleAndLeadingIconSample` — upstream ships no preview for it, so this catalog's own renders it.",
+          "related": [
+            {
+              "system": "glimmer-catalog",
+              "componentId": "ImageCard"
+            }
+          ]
+        },
+        {
+          "componentId": "Card/ClickableImageCardSample",
+          "preview": "ClickableImageCardSamplePreview",
+          "caption": "`ClickableImageCardSample` — upstream ships no preview for it, so this catalog's own renders it.",
+          "related": [
+            {
+              "system": "glimmer-catalog",
+              "componentId": "ImageCard"
+            }
+          ]
+        },
+        {
+          "componentId": "Card/ClickableImageCardWithTitleAndSubtitleAndLeadingIconSample",
+          "preview": "ClickableImageCardWithTitleAndSubtitleAndLeadingIconSamplePreview",
+          "caption": "`ClickableImageCardWithTitleAndSubtitleAndLeadingIconSample` — upstream ships no preview for it, so this catalog's own renders it.",
+          "related": [
+            {
+              "system": "glimmer-catalog",
+              "componentId": "ImageCard"
+            }
+          ]
         }
       ]
     },
@@ -334,6 +400,21 @@
           "componentId": "GlimmerPager/GlimmerHorizontalPagerSample",
           "preview": "GlimmerHorizontalPagerSamplePreview",
           "caption": "`GlimmerHorizontalPagerSample` — the sample upstream's own `@Preview` renders."
+        },
+        {
+          "componentId": "GlimmerPager/GlimmerPagerStateAnimateScrollToPageSample",
+          "preview": "GlimmerPagerStateAnimateScrollToPageSamplePreview",
+          "caption": "`GlimmerPagerStateAnimateScrollToPageSample` — upstream ships no preview for it, so this catalog's own renders it."
+        },
+        {
+          "componentId": "GlimmerPager/GlimmerPagerStateScrollToPageSample",
+          "preview": "GlimmerPagerStateScrollToPageSamplePreview",
+          "caption": "`GlimmerPagerStateScrollToPageSample` — upstream ships no preview for it, so this catalog's own renders it."
+        },
+        {
+          "componentId": "GlimmerPager/GlimmerPagerStateCustomAnimateScrollToPageSample",
+          "preview": "GlimmerPagerStateCustomAnimateScrollToPageSamplePreview",
+          "caption": "`GlimmerPagerStateCustomAnimateScrollToPageSample` — upstream ships no preview for it, so this catalog's own renders it."
         }
       ]
     },
@@ -531,6 +612,17 @@
               "componentId": "VerticalStack"
             }
           ]
+        },
+        {
+          "componentId": "Stack/VerticalStackWithMultipleShapesSample",
+          "preview": "VerticalStackWithMultipleShapesSamplePreview",
+          "caption": "`VerticalStackWithMultipleShapesSample` — upstream ships no preview for it, so this catalog's own renders it.",
+          "related": [
+            {
+              "system": "glimmer-catalog",
+              "componentId": "VerticalStack"
+            }
+          ]
         }
       ]
     },
@@ -551,6 +643,11 @@
           "componentId": "Surface/ClickableSurfaceSample",
           "preview": "ClickableSurfacePreview",
           "caption": "`ClickableSurfaceSample` — the sample upstream's own `@Preview` renders."
+        },
+        {
+          "componentId": "Surface/CustomFocusedColorSurfaceSample",
+          "preview": "CustomFocusedColorSurfaceSamplePreview",
+          "caption": "`CustomFocusedColorSurfaceSample` — upstream ships no preview for it, so this catalog's own renders it."
         }
       ]
     },
@@ -648,6 +745,22 @@
           "componentId": "Typography/TypographyDefaultUsage",
           "preview": "TypographyDefaultPreview",
           "caption": "`TypographyDefaultUsage` — the sample upstream's own `@Preview` renders."
+        }
+      ]
+    },
+    {
+      "name": "VoiceInputIndicator",
+      "components": [
+        {
+          "componentId": "VoiceInputIndicator/VoiceInputIndicatorSampleUsage",
+          "preview": "VoiceInputIndicatorSampleUsagePreview",
+          "caption": "`VoiceInputIndicatorSampleUsage` — upstream ships no preview for it, so this catalog's own renders it.",
+          "related": [
+            {
+              "system": "glimmer-catalog",
+              "componentId": "VoiceInputIndicator"
+            }
+          ]
         }
       ]
     }

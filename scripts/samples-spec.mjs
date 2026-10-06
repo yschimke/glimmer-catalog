@@ -196,7 +196,12 @@ export function kitComponentIds(dir = KIT_SOURCES) {
   return ids;
 }
 
-export function buildGroups(dir = VENDORED, kitIds = new Set(), wrappers = WRAPPERS) {
+export function buildGroups(
+  dir = VENDORED,
+  kitIds = new Set(),
+  // The module's wrappers belong to the vendored tree; any other tree brings its own, or none.
+  wrappers = dir === VENDORED ? WRAPPERS : null,
+) {
   const groups = [];
   for (const file of readdirSync(dir).filter((f) => f.endsWith(".kt")).sort()) {
     const api = apiName(file);
@@ -210,8 +215,8 @@ export function buildGroups(dir = VENDORED, kitIds = new Set(), wrappers = WRAPP
     ];
     // A file whose samples upstream never previews contributes nothing to render, so it
     // contributes no group: an empty `components` is not valid against the schema, and a group
-    // holding one would be a heading over nothing. `VoiceInputIndicatorSamples.kt` is the case —
-    // its sample exists, its preview does not.
+    // holding one would be a heading over nothing. No vendored file is in that state today: the
+    // module's own wrapper files preview every `@Sampled` function upstream left unpreviewed.
     if (previews.length === 0) continue;
     groups.push({
       name: api,

@@ -130,8 +130,8 @@ test("a preview rendering two of the file's samples has no single id, and says s
 });
 
 test("a file whose samples upstream never previews contributes no group", () => {
-  // `VoiceInputIndicatorSamples.kt` is the live case. An empty `components` is invalid against the
-  // schema, and a group holding one would be a heading over nothing.
+  // `VoiceInputIndicatorSamples.kt` was the live case before its wrapper. An empty `components` is
+  // invalid against the schema, and a group holding one would be a heading over nothing.
   const dir = sources({ "VoiceInputIndicatorSamples.kt": SAMPLE("VoiceInputIndicatorSample") });
   assert.deepEqual(buildGroups(dir), []);
 });
