@@ -588,7 +588,7 @@ drops a file with no previews rather than publishing an empty group.
 
 | | |
 | --- | --- |
-| `:catalog` | 12 components, 57 previews (27 stickers, 22 state cells, 8 environment composites), all rendering |
+| `:catalog` | 12 components, 66 previews (28 stickers, 30 state and exact-kit cells, 8 environment composites) |
 | `:samples-catalog` | 21 files vendored, 0 quarantined, 1 patch; 54 previews; published WITH a live bundle |
 | `androidx.annotation.Sampled` | a second local shim, beside `:samples-catalog`'s, because no published artifact provides it |
 | `design-artifacts.yml` | two more `uses:` blocks and a `glimmer` output on the Scope job |

@@ -360,6 +360,16 @@
           ]
         },
         {
+          "previewId": "ee.schimke.m3catalog.glimmer.CardsKt.CardImageSticker",
+          "name": "image",
+          "seeds": [
+            {
+              "key": "content",
+              "raw": "image"
+            }
+          ]
+        },
+        {
           "previewId": "ee.schimke.m3catalog.glimmer.CardsKt.CardActionSticker",
           "name": "action",
           "seeds": [
