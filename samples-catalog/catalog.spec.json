@@ -138,7 +138,7 @@
           "related": [
             {
               "system": "glimmer-catalog",
-              "componentId": "Card"
+              "componentId": "ImageCard"
             }
           ]
         },
@@ -149,7 +149,7 @@
           "related": [
             {
               "system": "glimmer-catalog",
-              "componentId": "Card"
+              "componentId": "ImageCard"
             }
           ]
         },
@@ -160,7 +160,7 @@
           "related": [
             {
               "system": "glimmer-catalog",
-              "componentId": "Card"
+              "componentId": "ImageCard"
             }
           ]
         },
@@ -171,7 +171,7 @@
           "related": [
             {
               "system": "glimmer-catalog",
-              "componentId": "Card"
+              "componentId": "ImageCard"
             }
           ]
         },
@@ -182,7 +182,7 @@
           "related": [
             {
               "system": "glimmer-catalog",
-              "componentId": "Card"
+              "componentId": "ImageCard"
             }
           ]
         },
@@ -193,7 +193,7 @@
           "related": [
             {
               "system": "glimmer-catalog",
-              "componentId": "Card"
+              "componentId": "ImageCard"
             }
           ]
         },
@@ -204,7 +204,7 @@
           "related": [
             {
               "system": "glimmer-catalog",
-              "componentId": "Card"
+              "componentId": "ImageCard"
             }
           ]
         },
@@ -215,7 +215,7 @@
           "related": [
             {
               "system": "glimmer-catalog",
-              "componentId": "Card"
+              "componentId": "ImageCard"
             }
           ]
         },
@@ -226,7 +226,7 @@
           "related": [
             {
               "system": "glimmer-catalog",
-              "componentId": "Card"
+              "componentId": "ImageCard"
             }
           ]
         },
@@ -237,7 +237,7 @@
           "related": [
             {
               "system": "glimmer-catalog",
-              "componentId": "Card"
+              "componentId": "ImageCard"
             }
           ]
         },
@@ -248,7 +248,7 @@
           "related": [
             {
               "system": "glimmer-catalog",
-              "componentId": "Card"
+              "componentId": "ImageCard"
             }
           ]
         },
@@ -259,7 +259,7 @@
           "related": [
             {
               "system": "glimmer-catalog",
-              "componentId": "Card"
+              "componentId": "ImageCard"
             }
           ]
         }

@@ -46,8 +46,9 @@
  *
  * `related` normally links a group to the `catalog` component of the same name. The small
  * explicit table below covers source-file names that are broader than the exact Compose API the
- * catalog must use: `StackSamples.kt` demonstrates `VerticalStack`, while
- * `GlimmerLazyListSamples.kt` demonstrates `GlimmerLazyColumn`. This is still much narrower than
+ * catalog must use: `StackSamples.kt` demonstrates `VerticalStack`, `GlimmerLazyListSamples.kt`
+ * demonstrates `GlimmerLazyColumn`, and `CardSamples.kt` joins `ImageCard`, the component the kit's
+ * `Card` symbol maps to since alpha20. This is still much narrower than
  * `samples-spec.mjs`'s hand-written table of 60-odd entries, and it never uses prefix matching
  * (`ButtonGroup` must not accidentally join to `Button`).
  *
@@ -66,6 +67,7 @@ const KIT_SOURCES = "catalog/src/main/kotlin/ee/schimke/m3catalog/glimmer";
 
 /** Sample source group -> exact Compose API id when the file name is broader than the API. */
 const SAMPLE_TO_KIT = new Map([
+  ["Card", "ImageCard"],
   ["GlimmerLazyList", "GlimmerLazyColumn"],
   ["Stack", "VerticalStack"],
 ]);

@@ -162,7 +162,7 @@
       "api": "androidx.xr.glimmer.LeadingImageCard",
       "sample": "samples-catalog/src/main/kotlin/upstream/androidx/xr/glimmer/samples/CardSamples.kt",
       "absentFromKit": "(leading|trailing) ?image",
-      "reason": "alpha20 adds two cards that put the image BESIDE the content rather than above it. The kit's `Card` set (416:2700) carries its image as a `Show Image` layer above the title, which is what `ImageCard` draws and what the `Card` `content=image` variant renders; it has no layer or axis for a side image, so mapping these to it would publish a layout the node does not depict.",
+      "reason": "alpha20 adds two cards that put the image BESIDE the content rather than above it. The kit's `Card` set (416:2700) carries its image as a `Show Image` layer above the title, which is what `ImageCard` draws and what the `ImageCard` component's base sticker renders; it has no layer or axis for a side image, so mapping these to it would publish a layout the node does not depict.",
       "evidence": "alpha20's Card.kt exports ImageCard, LeadingImageCard and TrailingImageCard, and removes `Card`'s `header` slot; alpha19 exported none of the three. The Cards page (4116:3165) caches only the `Card` set and its instances, and no cached node is named like a leading or trailing image. The samples render in `samples-catalog` as upstream's own previews.",
       "closesWhen": "The kit publishes a side-image card node. Each then lands in its own PR."
     },

@@ -316,8 +316,9 @@ as the base. `Card`'s `Show Action` layer is one the base cannot carry — Glimm
 slot on `ActionCard`, and a sticker published as `Card` has to invoke `Card` — so it folds in as
 `content=action`, the treatment `AGENTS.md` gives every "it is a separate composable" axis. alpha20
 did the same to the header image: `Card` lost its `header` slot and the image moved to
-`ImageCard`, so `Show Image` folds in as `content=image` and the base keeps entity, title,
-subtitle and body.
+`ImageCard`. The kit's populated symbol is therefore an `ImageCard` call, so `416:2700` now maps
+to an `ImageCard` component whose base draws image, entity, title, subtitle and body; plain `Card`
+is its `content=no-image`, `content=text-only` and `content=trailing-icon` variants.
 
 **`Card` and `ListItem` are bound to the kit's 420dp column** (`ContentFrame`), where they were
 filling the 960dp glasses display #376 made the wrap sandbox — 2.3x the width the kit draws them at.

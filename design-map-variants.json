@@ -335,10 +335,20 @@
     },
     {
       "code": "catalog/src/main/kotlin/ee/schimke/m3catalog/glimmer/Cards.kt#CardSticker",
-      "componentId": "Card",
+      "componentId": "ImageCard",
       "reference": "figma:HKfLClZDLRyMhf4IQQLna8/416:2700",
       "basePreviewId": "ee.schimke.m3catalog.glimmer.CardsKt.CardSticker",
       "renders": [
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.CardsKt.CardNoImageSticker",
+          "name": "no-image",
+          "seeds": [
+            {
+              "key": "content",
+              "raw": "no-image"
+            }
+          ]
+        },
         {
           "previewId": "ee.schimke.m3catalog.glimmer.CardsKt.CardTextOnlySticker",
           "name": "text-only",
@@ -356,16 +366,6 @@
             {
               "key": "content",
               "raw": "trailing-icon"
-            }
-          ]
-        },
-        {
-          "previewId": "ee.schimke.m3catalog.glimmer.CardsKt.CardImageSticker",
-          "name": "image",
-          "seeds": [
-            {
-              "key": "content",
-              "raw": "image"
             }
           ]
         },
