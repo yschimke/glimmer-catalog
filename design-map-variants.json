@@ -204,8 +204,22 @@
           "name": "focused",
           "seeds": [
             {
-              "key": "state",
-              "raw": "focused"
+              "key": "Type",
+              "raw": "Button set",
+              "kitAxis": "Type",
+              "kitValue": "Button set"
+            },
+            {
+              "key": "Length",
+              "raw": "3+",
+              "kitAxis": "Length",
+              "kitValue": "3+"
+            },
+            {
+              "key": "Focus",
+              "raw": "Start",
+              "kitAxis": "Focus",
+              "kitValue": "Start"
             }
           ]
         }
@@ -780,8 +794,16 @@
           "name": "focused",
           "seeds": [
             {
-              "key": "state",
-              "raw": "focused"
+              "key": "List index",
+              "raw": "Top",
+              "kitAxis": "List index",
+              "kitValue": "Top"
+            },
+            {
+              "key": "Title",
+              "raw": "False",
+              "kitAxis": "Title",
+              "kitValue": "False"
             }
           ]
         },
@@ -818,12 +840,16 @@
           "name": "True-focused",
           "seeds": [
             {
-              "key": "Title",
-              "raw": "True"
+              "key": "List index",
+              "raw": "Top",
+              "kitAxis": "List index",
+              "kitValue": "Top"
             },
             {
-              "key": "state",
-              "raw": "focused"
+              "key": "Title",
+              "raw": "True",
+              "kitAxis": "Title",
+              "kitValue": "True"
             }
           ]
         }
