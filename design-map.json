@@ -3,8 +3,80 @@
     {
       "code": "catalog/src/main/kotlin/ee/schimke/m3catalog/glimmer/ButtonGroups.kt#ButtonGroupSticker",
       "source": "figma",
-      "ref": "figma:HKfLClZDLRyMhf4IQQLna8/40000116:6497",
-      "previewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker"
+      "ref": [
+        {
+          "ref": "figma:HKfLClZDLRyMhf4IQQLna8/40000116:6497"
+        },
+        {
+          "ref": "figma:HKfLClZDLRyMhf4IQQLna8/40000116:6528",
+          "state": "cell-type-button-set-length-1-focus-start-40000116-6528"
+        },
+        {
+          "ref": "figma:HKfLClZDLRyMhf4IQQLna8/40000116:6521",
+          "state": "cell-type-button-set-length-2-focus-end-40000116-6521"
+        },
+        {
+          "ref": "figma:HKfLClZDLRyMhf4IQQLna8/40000116:6513",
+          "state": "cell-type-button-set-length-2-focus-start-40000116-6513"
+        },
+        {
+          "ref": "figma:HKfLClZDLRyMhf4IQQLna8/40000116:6508",
+          "state": "cell-type-button-set-length-3-focus-end-40000116-6508"
+        },
+        {
+          "ref": "figma:HKfLClZDLRyMhf4IQQLna8/40000116:6502",
+          "state": "cell-type-button-set-length-3-focus-middle-40000116-6502"
+        },
+        {
+          "ref": "figma:HKfLClZDLRyMhf4IQQLna8/40000116:6543",
+          "state": "cell-type-toggle-set-length-2-focus-end-40000116-6543"
+        },
+        {
+          "ref": "figma:HKfLClZDLRyMhf4IQQLna8/40000116:6539",
+          "state": "cell-type-toggle-set-length-2-focus-middle-40000116-6539"
+        },
+        {
+          "ref": "figma:HKfLClZDLRyMhf4IQQLna8/40000116:6535",
+          "state": "cell-type-toggle-set-length-2-focus-start-40000116-6535"
+        }
+      ],
+      "previewId": [
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker"
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker_VARIANT_cell-type-button-set-length-1-focus-start-40000116-6528",
+          "state": "cell-type-button-set-length-1-focus-start-40000116-6528"
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker_VARIANT_cell-type-button-set-length-2-focus-end-40000116-6521",
+          "state": "cell-type-button-set-length-2-focus-end-40000116-6521"
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker_VARIANT_cell-type-button-set-length-2-focus-start-40000116-6513",
+          "state": "cell-type-button-set-length-2-focus-start-40000116-6513"
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker_VARIANT_cell-type-button-set-length-3-focus-end-40000116-6508",
+          "state": "cell-type-button-set-length-3-focus-end-40000116-6508"
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker_VARIANT_cell-type-button-set-length-3-focus-middle-40000116-6502",
+          "state": "cell-type-button-set-length-3-focus-middle-40000116-6502"
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker_VARIANT_cell-type-toggle-set-length-2-focus-end-40000116-6543",
+          "state": "cell-type-toggle-set-length-2-focus-end-40000116-6543"
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker_VARIANT_cell-type-toggle-set-length-2-focus-middle-40000116-6539",
+          "state": "cell-type-toggle-set-length-2-focus-middle-40000116-6539"
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker_VARIANT_cell-type-toggle-set-length-2-focus-start-40000116-6535",
+          "state": "cell-type-toggle-set-length-2-focus-start-40000116-6535"
+        }
+      ]
     },
     {
       "code": "catalog/src/main/kotlin/ee/schimke/m3catalog/glimmer/Buttons.kt#ButtonSticker",
@@ -314,8 +386,20 @@
           "ref": "figma:HKfLClZDLRyMhf4IQQLna8/4116:5212"
         },
         {
+          "ref": "figma:HKfLClZDLRyMhf4IQQLna8/40000115:2000",
+          "state": "cell-list-index-bottom-title-false-40000115-2000"
+        },
+        {
+          "ref": "figma:HKfLClZDLRyMhf4IQQLna8/4116:5221",
+          "state": "cell-list-index-mid-title-false-4116-5221"
+        },
+        {
           "ref": "figma:HKfLClZDLRyMhf4IQQLna8/40000115:1891",
           "state": "True"
+        },
+        {
+          "ref": "figma:HKfLClZDLRyMhf4IQQLna8/40000115:1924",
+          "state": "True-cell-list-index-mid-title-true-40000115-1924"
         }
       ],
       "previewId": [
@@ -323,16 +407,60 @@
           "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnSticker"
         },
         {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnSticker_VARIANT_cell-list-index-bottom-title-false-40000115-2000",
+          "state": "cell-list-index-bottom-title-false-40000115-2000"
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnSticker_VARIANT_cell-list-index-mid-title-false-4116-5221",
+          "state": "cell-list-index-mid-title-false-4116-5221"
+        },
+        {
           "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnWithTitleSticker",
           "state": "True"
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnWithTitleSticker_VARIANT_cell-list-index-mid-title-true-40000115-1924",
+          "state": "True-cell-list-index-mid-title-true-40000115-1924"
         }
       ]
     },
     {
       "code": "catalog/src/main/kotlin/ee/schimke/m3catalog/glimmer/LazyLists.kt#GlimmerLazyColumnTwoLineSticker",
       "source": "figma",
-      "ref": "figma:HKfLClZDLRyMhf4IQQLna8/4116:5251",
-      "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnTwoLineSticker"
+      "ref": [
+        {
+          "ref": "figma:HKfLClZDLRyMhf4IQQLna8/4116:5251"
+        },
+        {
+          "ref": "figma:HKfLClZDLRyMhf4IQQLna8/4116:5259",
+          "state": "cell-list-index-mid-title-false-4116-5259"
+        },
+        {
+          "ref": "figma:HKfLClZDLRyMhf4IQQLna8/40000116:2458",
+          "state": "cell-list-index-mid-title-true-40000116-2458"
+        },
+        {
+          "ref": "figma:HKfLClZDLRyMhf4IQQLna8/40000116:2394",
+          "state": "cell-list-index-top-title-true-40000116-2394"
+        }
+      ],
+      "previewId": [
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnTwoLineSticker"
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnTwoLineSticker_VARIANT_cell-list-index-mid-title-false-4116-5259",
+          "state": "cell-list-index-mid-title-false-4116-5259"
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnTwoLineSticker_VARIANT_cell-list-index-mid-title-true-40000116-2458",
+          "state": "cell-list-index-mid-title-true-40000116-2458"
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnTwoLineSticker_VARIANT_cell-list-index-top-title-true-40000116-2394",
+          "state": "cell-list-index-top-title-true-40000116-2394"
+        }
+      ]
     },
     {
       "code": "catalog/src/main/kotlin/ee/schimke/m3catalog/glimmer/Lists.kt#ListItemSticker",
