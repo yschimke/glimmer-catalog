@@ -9,9 +9,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Send
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -58,14 +62,11 @@ private val MeetingTimes =
 // `Mid` the second, `Bottom` the last. The exact cells below drive REAL focus onto that row through
 // the harness, and an `index` knob scrolls the column so its autofocus line rests on that row —
 // Glimmer focuses whichever row sits under the line, so harness focus on a later row would be
-// pulled
-// straight back. The 2-line set's `Top` cells draw no focused row at all, so its base sticker stays
-// unfocused and only `Mid` and `Bottom` carry an interaction.
+// pulled straight back. The 2-line set's `Top` cells draw no focused row at all, so its base
+// sticker stays unfocused and only `Mid` and `Bottom` carry an interaction.
 //
-// Three `Bottom` cells are not authored yet: `Title=True` on either set and the 2-line set's
-// `Title=False`. Scrolled to the end, those columns still hold their last row under the edge scrim
-// with the focus line between rows when the capture is taken, and the kit's 2-line column has three
-// rows where this one has four. A capture that misses the cell would be worse than no cell.
+// `Bottom` waits for that harness focus to land before it scrolls: the focus request brings the
+// first row into view, and a scroll made before it would be pulled back to the top.
 
 @CatalogComponent(
   id = "GlimmerLazyColumn",
@@ -99,9 +100,10 @@ private val MeetingTimes =
 @Preview
 @Composable
 fun GlimmerLazyColumnSticker() = Sticker {
+  val list = rememberListAtIndex(GroceryLabels.size)
   GlimmerLazyColumn(
-    modifier = Modifier.width(KitContentWidth).height(364.dp),
-    state = rememberListAtIndex(GroceryLabels.size),
+    modifier = list.modifier.width(KitContentWidth).height(364.dp),
+    state = list.state,
   ) {
     items(count = GroceryLabels.size) { index -> GroceryListItem(index) }
   }
@@ -128,13 +130,21 @@ fun GlimmerLazyColumnSticker() = Sticker {
   kitProps = ["List index=Mid", "Title=True"],
   secondary = true,
 )
+@OverrideVariant(
+  name = "cell-list-index-bottom-title-true-4116-5230",
+  strings = ["index=bottom"],
+  interaction = VariantInteraction.Focused,
+  kitProps = ["List index=Bottom", "Title=True"],
+  secondary = true,
+)
 @Preview
 @Composable
 fun GlimmerLazyColumnWithTitleSticker() = Sticker {
+  val list = rememberListAtIndex(GroceryLabels.size)
   GlimmerLazyColumn(
     title = { TitleChip { Text(stringResource(R.string.list_title_ingredients)) } },
-    modifier = Modifier.width(KitContentWidth).height(364.dp),
-    state = rememberListAtIndex(GroceryLabels.size),
+    modifier = list.modifier.width(KitContentWidth).height(364.dp),
+    state = list.state,
   ) {
     items(count = GroceryLabels.size) { index -> GroceryListItem(index) }
   }
@@ -167,11 +177,26 @@ fun GlimmerLazyColumnWithTitleSticker() = Sticker {
   kitProps = ["List index=Mid", "Title=True"],
   secondary = true,
 )
+@OverrideVariant(
+  name = "cell-list-index-bottom-title-false-4116-5267",
+  strings = ["index=bottom"],
+  interaction = VariantInteraction.Focused,
+  kitProps = ["List index=Bottom", "Title=False"],
+  secondary = true,
+)
+@OverrideVariant(
+  name = "cell-list-index-bottom-title-true-40000116-2522",
+  strings = ["title=true", "index=bottom"],
+  interaction = VariantInteraction.Focused,
+  kitProps = ["List index=Bottom", "Title=True"],
+  secondary = true,
+)
 @Preview
 @Composable
 fun GlimmerLazyColumnTwoLineSticker() = Sticker {
-  val modifier = Modifier.width(KitContentWidth).height(364.dp)
-  val state = rememberListAtIndex(MeetingLabels.size)
+  val list = rememberListAtIndex(MeetingLabels.size)
+  val modifier = list.modifier.width(KitContentWidth).height(364.dp)
+  val state = list.state
   if (twoLineTitle()) {
     GlimmerLazyColumn(
       title = { TitleChip { Text(stringResource(R.string.label_title)) } },
@@ -219,6 +244,9 @@ private fun twoLineTitle(): Boolean =
     listOf(PreviewOverrideOption("false", "No title"), PreviewOverrideOption("true", "Title")),
   ) == "true"
 
+/** A list state, and the modifier that tells it when the column holds focus. */
+private class ListAtIndex(val state: GlimmerLazyListState, val modifier: Modifier)
+
 /**
  * A list state whose focus line starts on the [listIndex] row.
  *
@@ -226,17 +254,26 @@ private fun twoLineTitle(): Boolean =
  * viewport clamps every non-zero index to the end. Glimmer's autofocus focuses whichever row sits
  * under its focus line, and `scrollBy` moves the user scroll that line follows, so the row is
  * reached by scrolling the distance between the first row and it.
+ *
+ * The last row waits for the column to hold focus first. The harness focuses the first row, and
+ * that request brings the row into view: a scroll to the end made before it lands is pulled back to
+ * the top, leaving the last row half under the edge scrim and no row focused. Scrolled after it,
+ * the focus line carries focus down to the last row.
  */
 @Composable
-private fun rememberListAtIndex(count: Int): GlimmerLazyListState {
+private fun rememberListAtIndex(count: Int): ListAtIndex {
   val index = listIndex(count)
   // A fresh state per index, so a live change of the knob always measures from the top.
   val state = remember(index) { GlimmerLazyListState() }
+  var focused by remember(index) { mutableStateOf(false) }
   LaunchedEffect(state, index) {
     when (index) {
       0 -> {}
       // The last row: scroll to the end, where the focus line rests on it.
-      count - 1 -> state.scrollBy(LIST_END_SCROLL)
+      count - 1 -> {
+        snapshotFlow { focused }.first { it }
+        state.scrollBy(LIST_END_SCROLL)
+      }
       // Aim the focus line at the middle of the row rather than its top edge: with a title the line
       // starts higher than the first row, and a row-edge target leaves it short.
       else -> {
@@ -245,7 +282,7 @@ private fun rememberListAtIndex(count: Int): GlimmerLazyListState {
       }
     }
   }
-  return state
+  return ListAtIndex(state, Modifier.onFocusChanged { focused = it.hasFocus })
 }
 
 /** Further than any of these columns can scroll; `scrollBy` stops at the end. */

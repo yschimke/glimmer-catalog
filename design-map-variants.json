@@ -818,6 +818,24 @@
           ]
         },
         {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnWithTitleSticker_VARIANT_cell-list-index-bottom-title-true-4116-5230",
+          "name": "True-cell-list-index-bottom-title-true-4116-5230",
+          "seeds": [
+            {
+              "key": "List index",
+              "raw": "Bottom",
+              "kitAxis": "List index",
+              "kitValue": "Bottom"
+            },
+            {
+              "key": "Title",
+              "raw": "True",
+              "kitAxis": "Title",
+              "kitValue": "True"
+            }
+          ]
+        },
+        {
           "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnWithTitleSticker_VARIANT_cell-list-index-mid-title-true-40000115-1924",
           "name": "True-cell-list-index-mid-title-true-40000115-1924",
           "seeds": [
@@ -861,6 +879,42 @@
       "reference": "figma:HKfLClZDLRyMhf4IQQLna8/4116:5251",
       "basePreviewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnTwoLineSticker",
       "renders": [
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnTwoLineSticker_VARIANT_cell-list-index-bottom-title-false-4116-5267",
+          "name": "cell-list-index-bottom-title-false-4116-5267",
+          "seeds": [
+            {
+              "key": "List index",
+              "raw": "Bottom",
+              "kitAxis": "List index",
+              "kitValue": "Bottom"
+            },
+            {
+              "key": "Title",
+              "raw": "False",
+              "kitAxis": "Title",
+              "kitValue": "False"
+            }
+          ]
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnTwoLineSticker_VARIANT_cell-list-index-bottom-title-true-40000116-2522",
+          "name": "cell-list-index-bottom-title-true-40000116-2522",
+          "seeds": [
+            {
+              "key": "List index",
+              "raw": "Bottom",
+              "kitAxis": "List index",
+              "kitValue": "Bottom"
+            },
+            {
+              "key": "Title",
+              "raw": "True",
+              "kitAxis": "Title",
+              "kitValue": "True"
+            }
+          ]
+        },
         {
           "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnTwoLineSticker_VARIANT_cell-list-index-mid-title-false-4116-5259",
           "name": "cell-list-index-mid-title-false-4116-5259",
