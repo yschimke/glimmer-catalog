@@ -974,6 +974,26 @@
       ]
     },
     {
+      "code": "catalog/src/main/kotlin/ee/schimke/m3catalog/glimmer/Stacks.kt#VerticalStackSticker",
+      "componentId": "VerticalStack",
+      "reference": "figma:HKfLClZDLRyMhf4IQQLna8/40000042:4078",
+      "basePreviewId": "ee.schimke.m3catalog.glimmer.StacksKt.VerticalStackSticker",
+      "renders": [
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.StacksKt.VerticalStackSticker_VARIANT_cell-type-home-40000042-4081",
+          "name": "cell-type-home-40000042-4081",
+          "seeds": [
+            {
+              "key": "Type",
+              "raw": "Home",
+              "kitAxis": "Type",
+              "kitValue": "Home"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "code": "catalog/src/main/kotlin/ee/schimke/m3catalog/glimmer/VoiceInput.kt#VoiceInputIndicatorSticker",
       "componentId": "VoiceInputIndicator",
       "reference": "figma:HKfLClZDLRyMhf4IQQLna8/40000116:9346",
