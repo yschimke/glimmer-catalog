@@ -56,7 +56,14 @@ import ee.schimke.composeai.preview.VariantInteraction
   caption = "A horizontally scrolling set of buttons that enlarges and centers the focused item.",
 )
 @BuilderComponent(component = "ButtonGroup", canvas = "glimmer/button-group")
-@OverrideVariant(name = "focused", interaction = VariantInteraction.Focused)
+// The kit draws its base cell with the first item focused, which only the harness can capture.
+// Naming the cell's properties makes this render, not the unfocused base, its parity pair
+// (design-parity kit-index 1.6.0 lets an explicit kitProps variant claim its cell).
+@OverrideVariant(
+  name = "focused",
+  interaction = VariantInteraction.Focused,
+  kitProps = ["Type=Button set", "Length=3+", "Focus=Start"],
+)
 @ButtonGroupKitCells
 @Preview
 @Composable

@@ -58,7 +58,7 @@ npx --yes @yschimke/compose-design-map@1.55.0 \
 # Resolve variant declarations against the kit. Left in even while it resolves nothing: the run
 # PRINTS what it could not compare and why, which is the only place that gap is visible, and the
 # day a declaration starts naming a kit cell it resolves with no change to this script.
-npx --yes @design-parity/kit-index@0.1.53 resolve \
+npx --yes @design-parity/kit-index@1.6.0 resolve \
   --map "$WORK/design-map.json" \
   --variants "$WORK/design-map-variants.json" \
   --index figma-kit-index.json \
