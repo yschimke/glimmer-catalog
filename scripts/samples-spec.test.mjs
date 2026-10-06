@@ -130,10 +130,34 @@ test("a preview rendering two of the file's samples has no single id, and says s
 });
 
 test("a file whose samples upstream never previews contributes no group", () => {
-  // `VoiceInputIndicatorSamples.kt` is the live case. An empty `components` is invalid against the
-  // schema, and a group holding one would be a heading over nothing.
+  // `VoiceInputIndicatorSamples.kt` was the live case before its wrapper. An empty `components` is
+  // invalid against the schema, and a group holding one would be a heading over nothing.
   const dir = sources({ "VoiceInputIndicatorSamples.kt": SAMPLE("VoiceInputIndicatorSample") });
   assert.deepEqual(buildGroups(dir), []);
+});
+
+test("a wrapper file previews the samples of its vendored counterpart", () => {
+  // `AlertDialogSamples.kt` is the live case: upstream ships the samples and no preview, so a
+  // hand-written `AlertDialogSamplePreviews.kt` outside the vendored tree renders them.
+  const dir = sources({ "AlertDialogSamples.kt": SAMPLE("AlertDialogSample") });
+  const wrappers = sources({
+    "AlertDialogSamplePreviews.kt":
+      "@GlimmerSamplePreview\n@Composable\nprivate fun AlertDialogSamplePreview() {\n" +
+      "  GlimmerTheme { AlertDialogSample() }\n}\n",
+  });
+  assert.deepEqual(buildGroups(dir, new Set(), wrappers), [
+    {
+      name: "AlertDialog",
+      components: [
+        {
+          componentId: "AlertDialog/AlertDialogSample",
+          preview: "AlertDialogSamplePreview",
+          caption:
+            "`AlertDialogSample` — upstream ships no preview for it, so this catalog's own renders it.",
+        },
+      ],
+    },
+  ]);
 });
 
 test("`related` joins on exact name equality, so ButtonGroup does not link to Button", () => {

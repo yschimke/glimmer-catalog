@@ -175,7 +175,7 @@
       "sample": "samples-catalog/src/main/kotlin/upstream/androidx/xr/glimmer/samples/AlertDialogSamples.kt",
       "absentFromKit": "dialog",
       "reason": "alpha20 adds `AlertDialog`; the kit's `🧩 Components` page lays out no dialog. A component with no exact kit cell does not enter the inventory.",
-      "evidence": "alpha20's AlertDialog.kt exports AlertDialog(onDismissRequest, confirmButton, text, …); alpha19 did not. No cached page carries a node whose name contains `dialog`. Upstream's AlertDialogSamples.kt is vendored but declares no @Preview, so it has no render in `samples-catalog` either.",
+      "evidence": "alpha20's AlertDialog.kt exports AlertDialog(onDismissRequest, confirmButton, text, …); alpha19 did not. No cached page carries a node whose name contains `dialog`. Upstream's AlertDialogSamples.kt declares no @Preview, so `samples-catalog` renders its two samples through its own AlertDialogSamplePreviews.kt.",
       "closesWhen": "The kit publishes a dialog node."
     },
     {
