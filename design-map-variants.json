@@ -2,6 +2,216 @@
   "schema": "compose-preview-design-map-variants/v1",
   "components": [
     {
+      "code": "catalog/src/main/kotlin/ee/schimke/m3catalog/glimmer/ButtonGroups.kt#ButtonGroupSticker",
+      "componentId": "ButtonGroup",
+      "reference": "figma:HKfLClZDLRyMhf4IQQLna8/40000116:6497",
+      "basePreviewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker",
+      "renders": [
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker_VARIANT_cell-type-button-set-length-1-focus-start-40000116-6528",
+          "name": "cell-type-button-set-length-1-focus-start-40000116-6528",
+          "seeds": [
+            {
+              "key": "Type",
+              "raw": "Button set",
+              "kitAxis": "Type",
+              "kitValue": "Button set"
+            },
+            {
+              "key": "Length",
+              "raw": "1",
+              "kitAxis": "Length",
+              "kitValue": "1"
+            },
+            {
+              "key": "Focus",
+              "raw": "Start",
+              "kitAxis": "Focus",
+              "kitValue": "Start"
+            }
+          ]
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker_VARIANT_cell-type-button-set-length-2-focus-end-40000116-6521",
+          "name": "cell-type-button-set-length-2-focus-end-40000116-6521",
+          "seeds": [
+            {
+              "key": "Type",
+              "raw": "Button set",
+              "kitAxis": "Type",
+              "kitValue": "Button set"
+            },
+            {
+              "key": "Length",
+              "raw": "2",
+              "kitAxis": "Length",
+              "kitValue": "2"
+            },
+            {
+              "key": "Focus",
+              "raw": "End",
+              "kitAxis": "Focus",
+              "kitValue": "End"
+            }
+          ]
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker_VARIANT_cell-type-button-set-length-2-focus-start-40000116-6513",
+          "name": "cell-type-button-set-length-2-focus-start-40000116-6513",
+          "seeds": [
+            {
+              "key": "Type",
+              "raw": "Button set",
+              "kitAxis": "Type",
+              "kitValue": "Button set"
+            },
+            {
+              "key": "Length",
+              "raw": "2",
+              "kitAxis": "Length",
+              "kitValue": "2"
+            },
+            {
+              "key": "Focus",
+              "raw": "Start",
+              "kitAxis": "Focus",
+              "kitValue": "Start"
+            }
+          ]
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker_VARIANT_cell-type-button-set-length-3-focus-end-40000116-6508",
+          "name": "cell-type-button-set-length-3-focus-end-40000116-6508",
+          "seeds": [
+            {
+              "key": "Type",
+              "raw": "Button set",
+              "kitAxis": "Type",
+              "kitValue": "Button set"
+            },
+            {
+              "key": "Length",
+              "raw": "3+",
+              "kitAxis": "Length",
+              "kitValue": "3+"
+            },
+            {
+              "key": "Focus",
+              "raw": "End",
+              "kitAxis": "Focus",
+              "kitValue": "End"
+            }
+          ]
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker_VARIANT_cell-type-button-set-length-3-focus-middle-40000116-6502",
+          "name": "cell-type-button-set-length-3-focus-middle-40000116-6502",
+          "seeds": [
+            {
+              "key": "Type",
+              "raw": "Button set",
+              "kitAxis": "Type",
+              "kitValue": "Button set"
+            },
+            {
+              "key": "Length",
+              "raw": "3+",
+              "kitAxis": "Length",
+              "kitValue": "3+"
+            },
+            {
+              "key": "Focus",
+              "raw": "Middle",
+              "kitAxis": "Focus",
+              "kitValue": "Middle"
+            }
+          ]
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker_VARIANT_cell-type-toggle-set-length-2-focus-end-40000116-6543",
+          "name": "cell-type-toggle-set-length-2-focus-end-40000116-6543",
+          "seeds": [
+            {
+              "key": "Type",
+              "raw": "Toggle set",
+              "kitAxis": "Type",
+              "kitValue": "Toggle set"
+            },
+            {
+              "key": "Length",
+              "raw": "2",
+              "kitAxis": "Length",
+              "kitValue": "2"
+            },
+            {
+              "key": "Focus",
+              "raw": "End",
+              "kitAxis": "Focus",
+              "kitValue": "End"
+            }
+          ]
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker_VARIANT_cell-type-toggle-set-length-2-focus-middle-40000116-6539",
+          "name": "cell-type-toggle-set-length-2-focus-middle-40000116-6539",
+          "seeds": [
+            {
+              "key": "Type",
+              "raw": "Toggle set",
+              "kitAxis": "Type",
+              "kitValue": "Toggle set"
+            },
+            {
+              "key": "Length",
+              "raw": "2",
+              "kitAxis": "Length",
+              "kitValue": "2"
+            },
+            {
+              "key": "Focus",
+              "raw": "Middle",
+              "kitAxis": "Focus",
+              "kitValue": "Middle"
+            }
+          ]
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker_VARIANT_cell-type-toggle-set-length-2-focus-start-40000116-6535",
+          "name": "cell-type-toggle-set-length-2-focus-start-40000116-6535",
+          "seeds": [
+            {
+              "key": "Type",
+              "raw": "Toggle set",
+              "kitAxis": "Type",
+              "kitValue": "Toggle set"
+            },
+            {
+              "key": "Length",
+              "raw": "2",
+              "kitAxis": "Length",
+              "kitValue": "2"
+            },
+            {
+              "key": "Focus",
+              "raw": "Start",
+              "kitAxis": "Focus",
+              "kitValue": "Start"
+            }
+          ]
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.ButtonGroupsKt.ButtonGroupSticker_VARIANT_focused",
+          "name": "focused",
+          "seeds": [
+            {
+              "key": "state",
+              "raw": "focused"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "code": "catalog/src/main/kotlin/ee/schimke/m3catalog/glimmer/Buttons.kt#ButtonSticker",
       "componentId": "Button",
       "reference": "figma:HKfLClZDLRyMhf4IQQLna8/40:660",
@@ -530,12 +740,152 @@
       "basePreviewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnSticker",
       "renders": [
         {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnSticker_VARIANT_cell-list-index-bottom-title-false-40000115-2000",
+          "name": "cell-list-index-bottom-title-false-40000115-2000",
+          "seeds": [
+            {
+              "key": "List index",
+              "raw": "Bottom",
+              "kitAxis": "List index",
+              "kitValue": "Bottom"
+            },
+            {
+              "key": "Title",
+              "raw": "False",
+              "kitAxis": "Title",
+              "kitValue": "False"
+            }
+          ]
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnSticker_VARIANT_cell-list-index-mid-title-false-4116-5221",
+          "name": "cell-list-index-mid-title-false-4116-5221",
+          "seeds": [
+            {
+              "key": "List index",
+              "raw": "Mid",
+              "kitAxis": "List index",
+              "kitValue": "Mid"
+            },
+            {
+              "key": "Title",
+              "raw": "False",
+              "kitAxis": "Title",
+              "kitValue": "False"
+            }
+          ]
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnSticker_VARIANT_focused",
+          "name": "focused",
+          "seeds": [
+            {
+              "key": "state",
+              "raw": "focused"
+            }
+          ]
+        },
+        {
           "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnWithTitleSticker",
           "name": "True",
           "seeds": [
             {
               "key": "Title",
               "raw": "True"
+            }
+          ]
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnWithTitleSticker_VARIANT_cell-list-index-mid-title-true-40000115-1924",
+          "name": "True-cell-list-index-mid-title-true-40000115-1924",
+          "seeds": [
+            {
+              "key": "List index",
+              "raw": "Mid",
+              "kitAxis": "List index",
+              "kitValue": "Mid"
+            },
+            {
+              "key": "Title",
+              "raw": "True",
+              "kitAxis": "Title",
+              "kitValue": "True"
+            }
+          ]
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnWithTitleSticker_VARIANT_focused",
+          "name": "True-focused",
+          "seeds": [
+            {
+              "key": "Title",
+              "raw": "True"
+            },
+            {
+              "key": "state",
+              "raw": "focused"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "catalog/src/main/kotlin/ee/schimke/m3catalog/glimmer/LazyLists.kt#GlimmerLazyColumnTwoLineSticker",
+      "componentId": "GlimmerLazyColumn/TwoLine",
+      "reference": "figma:HKfLClZDLRyMhf4IQQLna8/4116:5251",
+      "basePreviewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnTwoLineSticker",
+      "renders": [
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnTwoLineSticker_VARIANT_cell-list-index-mid-title-false-4116-5259",
+          "name": "cell-list-index-mid-title-false-4116-5259",
+          "seeds": [
+            {
+              "key": "List index",
+              "raw": "Mid",
+              "kitAxis": "List index",
+              "kitValue": "Mid"
+            },
+            {
+              "key": "Title",
+              "raw": "False",
+              "kitAxis": "Title",
+              "kitValue": "False"
+            }
+          ]
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnTwoLineSticker_VARIANT_cell-list-index-mid-title-true-40000116-2458",
+          "name": "cell-list-index-mid-title-true-40000116-2458",
+          "seeds": [
+            {
+              "key": "List index",
+              "raw": "Mid",
+              "kitAxis": "List index",
+              "kitValue": "Mid"
+            },
+            {
+              "key": "Title",
+              "raw": "True",
+              "kitAxis": "Title",
+              "kitValue": "True"
+            }
+          ]
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnTwoLineSticker_VARIANT_cell-list-index-top-title-true-40000116-2394",
+          "name": "cell-list-index-top-title-true-40000116-2394",
+          "seeds": [
+            {
+              "key": "List index",
+              "raw": "Top",
+              "kitAxis": "List index",
+              "kitValue": "Top"
+            },
+            {
+              "key": "Title",
+              "raw": "True",
+              "kitAxis": "Title",
+              "kitValue": "True"
             }
           ]
         }
