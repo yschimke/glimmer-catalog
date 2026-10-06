@@ -23,9 +23,7 @@
   <string name="meeting_design_check_in">주간 디자인 회의</string>
   <string name="meeting_one_to_one">일대일 면담</string>
   <string name="meeting_lunch">점심</string>
-  <string name="meeting_review">리뷰</string>
   <string name="time_early_morning">오전 8:00 – 8:30</string>
   <string name="time_late_morning">오전 9:00 – 9:30</string>
   <string name="time_midday">오후 12:00 – 1:00</string>
-  <string name="time_afternoon">오후 2:00 – 3:00</string>
 </resources>

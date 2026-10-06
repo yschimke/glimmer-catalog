@@ -398,6 +398,10 @@
           "state": "True"
         },
         {
+          "ref": "figma:HKfLClZDLRyMhf4IQQLna8/4116:5230",
+          "state": "True-cell-list-index-bottom-title-true-4116-5230"
+        },
+        {
           "ref": "figma:HKfLClZDLRyMhf4IQQLna8/40000115:1924",
           "state": "True-cell-list-index-mid-title-true-40000115-1924"
         }
@@ -419,6 +423,10 @@
           "state": "True"
         },
         {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnWithTitleSticker_VARIANT_cell-list-index-bottom-title-true-4116-5230",
+          "state": "True-cell-list-index-bottom-title-true-4116-5230"
+        },
+        {
           "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnWithTitleSticker_VARIANT_cell-list-index-mid-title-true-40000115-1924",
           "state": "True-cell-list-index-mid-title-true-40000115-1924"
         }
@@ -430,6 +438,14 @@
       "ref": [
         {
           "ref": "figma:HKfLClZDLRyMhf4IQQLna8/4116:5251"
+        },
+        {
+          "ref": "figma:HKfLClZDLRyMhf4IQQLna8/4116:5267",
+          "state": "cell-list-index-bottom-title-false-4116-5267"
+        },
+        {
+          "ref": "figma:HKfLClZDLRyMhf4IQQLna8/40000116:2522",
+          "state": "cell-list-index-bottom-title-true-40000116-2522"
         },
         {
           "ref": "figma:HKfLClZDLRyMhf4IQQLna8/4116:5259",
@@ -447,6 +463,14 @@
       "previewId": [
         {
           "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnTwoLineSticker"
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnTwoLineSticker_VARIANT_cell-list-index-bottom-title-false-4116-5267",
+          "state": "cell-list-index-bottom-title-false-4116-5267"
+        },
+        {
+          "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnTwoLineSticker_VARIANT_cell-list-index-bottom-title-true-40000116-2522",
+          "state": "cell-list-index-bottom-title-true-40000116-2522"
         },
         {
           "previewId": "ee.schimke.m3catalog.glimmer.LazyListsKt.GlimmerLazyColumnTwoLineSticker_VARIANT_cell-list-index-mid-title-false-4116-5259",

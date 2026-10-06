@@ -34,9 +34,7 @@
   <string name="meeting_design_check_in">Weekly design check-in</string>
   <string name="meeting_one_to_one">One-to-one</string>
   <string name="meeting_lunch">Lunch</string>
-  <string name="meeting_review">Review</string>
   <string name="time_early_morning">8 – 8:30 AM</string>
   <string name="time_late_morning">9 – 9:30 AM</string>
   <string name="time_midday">12 – 1 PM</string>
-  <string name="time_afternoon">2 – 3 PM</string>
 </resources>

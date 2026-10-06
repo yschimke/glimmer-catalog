@@ -23,9 +23,7 @@
   <string name="meeting_design_check_in">ประชุมออกแบบประจำสัปดาห์</string>
   <string name="meeting_one_to_one">คุยตัวต่อตัว</string>
   <string name="meeting_lunch">มื้อกลางวัน</string>
-  <string name="meeting_review">รีวิว</string>
   <string name="time_early_morning">08:00 – 08:30 น.</string>
   <string name="time_late_morning">09:00 – 09:30 น.</string>
   <string name="time_midday">12:00 – 13:00 น.</string>
-  <string name="time_afternoon">14:00 – 15:00 น.</string>
 </resources>
