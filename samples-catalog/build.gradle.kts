@@ -15,7 +15,7 @@
 //
 // ── Annotation density ────────────────────────────────────────────────────────────────────────
 //
-// Glimmer's samples carry MORE `@Preview`s than `@Sampled` functions (54 to 47 at the pinned ref),
+// Glimmer's samples carry MORE `@Preview`s than `@Sampled` functions (54 to 49 at the pinned ref),
 // the best ratio in AndroidX — so discovery finds them directly and this module, like
 // `:samples-catalog`, generates no wrappers.
 plugins {

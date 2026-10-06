@@ -28,7 +28,7 @@ composePreview {
 
 android {
   namespace = "ee.schimke.m3catalog.glimmer"
-  // glimmer 1.0.0-alpha19's AAR metadata says `minCompileSdk=37`; anything lower fails to resolve.
+  // glimmer 1.0.0-alpha20's AAR metadata says `minCompileSdk=37`; anything lower fails to resolve.
   compileSdk = 37
 
   // The AAR's own `uses-sdk` floor.

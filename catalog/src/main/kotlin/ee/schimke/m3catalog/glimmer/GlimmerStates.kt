@@ -66,7 +66,7 @@ annotation class GlimmerStates
 /**
  * [GlimmerStates] without the disabled cell, for `ListItem`.
  *
- * Not a judgement about whether a disabled row is worth drawing — alpha19's `ListItem` has **no
+ * Not a judgement about whether a disabled row is worth drawing — alpha20's `ListItem` has **no
  * `enabled` parameter**, so there is no way to call it disabled. The kit publishes `Type=1-line,
  * State=Disabled` (`384:4192`) and this catalog cannot be a picture of it; see the note in
  * [Lists.kt]'s `ListItemSticker`.

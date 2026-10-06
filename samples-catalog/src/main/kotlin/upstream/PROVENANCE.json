@@ -4,17 +4,17 @@
   "libraries": [
     {
       "name": "glimmer",
-      "ref": "4a14204d1ef5126b7f87bf2d71ce3bc02637c7e1",
+      "ref": "429b81ad2ec8557d8d5ea67c07c4ce0e7b87be51",
       "paths": [
         "xr/glimmer/glimmer/samples/src/main/java/androidx/xr/glimmer/samples"
       ],
-      "artifact": "androidx.xr.glimmer:glimmer:1.0.0-alpha19",
-      "files": 19
+      "artifact": "androidx.xr.glimmer:glimmer:1.0.0-alpha20",
+      "files": 21
     }
   ],
-  "files": 19,
-  "quarantined": [
-    "IconMarkerSamples.kt"
-  ],
-  "patches": []
+  "files": 21,
+  "quarantined": [],
+  "patches": [
+    "0001-samples-type-in-google-sans-flex.patch"
+  ]
 }

@@ -13,6 +13,7 @@ node scripts/import-samples.mjs --manifest samples-catalog/import.json \
   --out /tmp/glimmer-fresh
 ```
 
-Empty so far, and worth keeping that way: unlike the material3 corpus, these samples import
-`androidx.xr.glimmer` and little else, and this module renders on Android — the platform they were
-written for.
+One patch so far, `0001-samples-type-in-google-sans-flex.patch`: it swaps upstream's `@Preview` for
+this module's `@GlimmerSamplePreview` so the samples render in the kit's typeface. It is mechanical,
+so re-cut it after an upstream bump by importing with an empty `--patches` directory and applying
+the same two substitutions (`@Preview` and its import) to every file.

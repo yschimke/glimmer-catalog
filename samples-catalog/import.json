@@ -4,11 +4,13 @@
   "libraries": [
     {
       "name": "glimmer",
-      "ref": "4a14204d1ef5126b7f87bf2d71ce3bc02637c7e1",
-      "refDescription": "androidx-main on 2026-09-09, the day glimmer 1.0.0-alpha19 was published, resolved by the same POM Last-Modified rule samples/import.json uses — then backed up ONE commit, to the parent of `Introduce ImageCard API in glimmer` (9bca189d). That commit landed hours after the alpha19 cut, and the samples it rewrote call an `ImageCard` the published AAR does not contain. The Last-Modified rule places the ref within a day; where a same-day API commit straddles the cut, the compiler says which side to be on. Pinning four months earlier instead is what a guess looks like: that tree calls a Card `action` slot alpha19 also does not have.",
-      "paths": ["xr/glimmer/glimmer/samples/src/main/java/androidx/xr/glimmer/samples"],
+      "ref": "429b81ad2ec8557d8d5ea67c07c4ce0e7b87be51",
+      "refDescription": "androidx-main at the merge immediately before `Add focused color customization to Button` (cd72ecdb, merged as 79a2dcb0 on 2026-09-23, the day glimmer 1.0.0-alpha20 was published). Verified rather than estimated: every .kt file in the published glimmer-1.0.0-alpha20-sources.jar hashes identically (git hash-object) to xr/glimmer/glimmer/src/main/java at this commit, and the next glimmer change on main (cd72ecdb) is the first that diverges. The library tree is unchanged here since bec77af6 (`Remove SurfaceDefaults.color and IconMarkerDefaults.color functions`, 2026-09-16), so the samples are exactly the ones written against the shipped API.",
+      "paths": [
+        "xr/glimmer/glimmer/samples/src/main/java/androidx/xr/glimmer/samples"
+      ],
       "artifactCoordinates": "androidx.xr.glimmer:glimmer",
-      "artifactVersion": "1.0.0-alpha19"
+      "artifactVersion": "1.0.0-alpha20"
     }
   ]
 }

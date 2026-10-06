@@ -21,6 +21,7 @@ const expected = [
   "icon",
   "icon-button",
   "icon-toggle-button",
+  "image-card",
   "list-item",
   "text",
   "title-chip",

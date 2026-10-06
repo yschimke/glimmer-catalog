@@ -138,7 +138,7 @@
           "related": [
             {
               "system": "glimmer-catalog",
-              "componentId": "Card"
+              "componentId": "ImageCard"
             }
           ]
         },
@@ -149,7 +149,7 @@
           "related": [
             {
               "system": "glimmer-catalog",
-              "componentId": "Card"
+              "componentId": "ImageCard"
             }
           ]
         },
@@ -160,51 +160,7 @@
           "related": [
             {
               "system": "glimmer-catalog",
-              "componentId": "Card"
-            }
-          ]
-        },
-        {
-          "componentId": "Card/CardWithTitleAndHeaderSample",
-          "preview": "CardWithTitleAndHeaderPreview",
-          "caption": "`CardWithTitleAndHeaderSample` — the sample upstream's own `@Preview` renders.",
-          "related": [
-            {
-              "system": "glimmer-catalog",
-              "componentId": "Card"
-            }
-          ]
-        },
-        {
-          "componentId": "Card/ActionCardWithTitleSample",
-          "preview": "ActionCardWithTitlePreview",
-          "caption": "`ActionCardWithTitleSample` — the sample upstream's own `@Preview` renders.",
-          "related": [
-            {
-              "system": "glimmer-catalog",
-              "componentId": "Card"
-            }
-          ]
-        },
-        {
-          "componentId": "Card/CardWithTitleAndLeadingIconAndHeader",
-          "preview": "CardWithTitleAndLeadingIconAndHeaderPreview",
-          "caption": "`CardWithTitleAndLeadingIconAndHeader` — the sample upstream's own `@Preview` renders.",
-          "related": [
-            {
-              "system": "glimmer-catalog",
-              "componentId": "Card"
-            }
-          ]
-        },
-        {
-          "componentId": "Card/ActionCardWithTitleAndLeadingIconAndHeader",
-          "preview": "ActionCardWithTitleAndLeadingIconAndHeaderPreview",
-          "caption": "`ActionCardWithTitleAndLeadingIconAndHeader` — the sample upstream's own `@Preview` renders.",
-          "related": [
-            {
-              "system": "glimmer-catalog",
-              "componentId": "Card"
+              "componentId": "ImageCard"
             }
           ]
         },
@@ -215,7 +171,7 @@
           "related": [
             {
               "system": "glimmer-catalog",
-              "componentId": "Card"
+              "componentId": "ImageCard"
             }
           ]
         },
@@ -226,7 +182,7 @@
           "related": [
             {
               "system": "glimmer-catalog",
-              "componentId": "Card"
+              "componentId": "ImageCard"
             }
           ]
         },
@@ -237,7 +193,73 @@
           "related": [
             {
               "system": "glimmer-catalog",
-              "componentId": "Card"
+              "componentId": "ImageCard"
+            }
+          ]
+        },
+        {
+          "componentId": "Card/ActionCardWithTitleSample",
+          "preview": "ActionCardWithTitlePreview",
+          "caption": "`ActionCardWithTitleSample` — the sample upstream's own `@Preview` renders.",
+          "related": [
+            {
+              "system": "glimmer-catalog",
+              "componentId": "ImageCard"
+            }
+          ]
+        },
+        {
+          "componentId": "Card/ActionCardWithTitleAndLeadingIcon",
+          "preview": "ActionCardWithTitleAndLeadingIconPreview",
+          "caption": "`ActionCardWithTitleAndLeadingIcon` — the sample upstream's own `@Preview` renders.",
+          "related": [
+            {
+              "system": "glimmer-catalog",
+              "componentId": "ImageCard"
+            }
+          ]
+        },
+        {
+          "componentId": "Card/ImageCardSample",
+          "preview": "ImageCardPreview",
+          "caption": "`ImageCardSample` — the sample upstream's own `@Preview` renders.",
+          "related": [
+            {
+              "system": "glimmer-catalog",
+              "componentId": "ImageCard"
+            }
+          ]
+        },
+        {
+          "componentId": "Card/ImageCardWithTitleAndSubtitleAndLeadingIconSample",
+          "preview": "ImageCardWithTitleAndSubtitleAndLeadingIconPreview",
+          "caption": "`ImageCardWithTitleAndSubtitleAndLeadingIconSample` — the sample upstream's own `@Preview` renders.",
+          "related": [
+            {
+              "system": "glimmer-catalog",
+              "componentId": "ImageCard"
+            }
+          ]
+        },
+        {
+          "componentId": "Card/LeadingImageCardSample",
+          "preview": "LeadingImageCardPreview",
+          "caption": "`LeadingImageCardSample` — the sample upstream's own `@Preview` renders.",
+          "related": [
+            {
+              "system": "glimmer-catalog",
+              "componentId": "ImageCard"
+            }
+          ]
+        },
+        {
+          "componentId": "Card/TrailingImageCardSample",
+          "preview": "TrailingImageCardPreview",
+          "caption": "`TrailingImageCardSample` — the sample upstream's own `@Preview` renders.",
+          "related": [
+            {
+              "system": "glimmer-catalog",
+              "componentId": "ImageCard"
             }
           ]
         }
@@ -323,6 +345,21 @@
               "componentId": "IconButton"
             }
           ]
+        }
+      ]
+    },
+    {
+      "name": "IconMarker",
+      "components": [
+        {
+          "componentId": "IconMarker/IconMarkerSample",
+          "preview": "IconMarkerPreview",
+          "caption": "`IconMarkerSample` — the sample upstream's own `@Preview` renders."
+        },
+        {
+          "componentId": "IconMarker/IconMarkerWithCustomIconSample",
+          "preview": "IconMarkerWithCustomIconSamplePreview",
+          "caption": "`IconMarkerWithCustomIconSample` — the sample upstream's own `@Preview` renders."
         }
       ]
     },

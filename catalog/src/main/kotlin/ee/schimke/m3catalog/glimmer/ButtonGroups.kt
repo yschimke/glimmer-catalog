@@ -30,7 +30,7 @@ import ee.schimke.composeai.preview.CatalogGroup
 @Preview
 @Composable
 fun ButtonGroupSticker() = Sticker {
-  // The kit gives the strip 16dp horizontal insets. alpha19's temporary default is 44dp
+  // The kit gives the strip 16dp horizontal insets. alpha20's temporary default is 44dp
   // (b/535205202), but contentPadding is a public caller parameter, so the design-led value belongs
   // here rather than being recorded as an unexplained divergence.
   ButtonGroup(

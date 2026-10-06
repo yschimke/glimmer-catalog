@@ -13,6 +13,7 @@ import androidx.xr.glimmer.ActionCard
 import androidx.xr.glimmer.Button
 import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.Icon
+import androidx.xr.glimmer.ImageCard
 import androidx.xr.glimmer.Text
 import androidx.xr.glimmer.TitleChip
 import ee.schimke.composeai.preview.BuilderComponent
@@ -20,7 +21,7 @@ import ee.schimke.composeai.preview.CatalogComponent
 import ee.schimke.composeai.preview.CatalogGroup
 import ee.schimke.composeai.preview.CatalogVariant
 
-// The card's slots — header image, title, subtitle, leading and trailing icon — are content axes of
+// The card's slots — image, title, subtitle, leading and trailing icon — are content axes of
 // ONE component, so they fold in as variants rather than splitting the card four ways.
 //
 // ## The base sticker draws the card the kit draws
@@ -33,25 +34,30 @@ import ee.schimke.composeai.preview.CatalogVariant
 // pictures, not a card drawn wrongly. Design-led, so the base is the populated form and the bare
 // one is a variant under it.
 //
-// `Show Action` is turned on in that symbol too, and it is the one layer the base cannot carry:
-// alpha19 puts the action slot on `ActionCard` rather than on `Card`, and a sticker published as
-// `Card` has to invoke `Card`. It folds in as `content=action` below — the same treatment
-// `AGENTS.md` gives every "it is a separate composable" axis.
+// `Show Image` and `Show Action` are the two layers `Card` itself cannot carry. alpha20 removed
+// `Card`'s `header` slot and moved the image onto `ImageCard`, the way the action slot already
+// lives
+// on `ActionCard`. The symbol the kit publishes is therefore an `ImageCard` call, so the component
+// mapped to `416:2700` is `ImageCard` — its base sticker invokes exactly the API that draws the
+// kit's populated card, and parity compares like with like. `Card` and `ActionCard` fold in beneath
+// it as `content=` variants, the treatment `AGENTS.md` gives every "it is a separate composable"
+// axis. `LeadingImageCard` and `TrailingImageCard` place the image beside the content, a layout the
+// kit's symbol has no layer for, so they stay declared in `kit-gaps.json`.
 
 @CatalogComponent(
-  id = "Card",
-  // The kit's `Card` component — title chip, image slot, title, subtitle and content
-  // area, every slot this component exposes.
+  id = "ImageCard",
+  // The kit's `Card` component with its shipped layers on — image, entity, title, subtitle and
+  // body. Since alpha20 that is an `ImageCard`: plain `Card` has no image slot.
   reference = "figma:HKfLClZDLRyMhf4IQQLna8/416:2700",
-  caption = "A surface for a unit of content. Header image, title, subtitle and the icon slots.",
+  caption = "A card for a unit of content. Image, title, subtitle and the icon slots.",
 )
-@BuilderComponent(component = "Card", canvas = "glimmer/card")
+@BuilderComponent(component = "ImageCard", canvas = "glimmer/image-card")
 @Preview
 @Composable
 fun CardSticker() = Sticker {
   ContentFrame {
-    Card(
-      header = {
+    ImageCard(
+      image = {
         Image(
           HeaderImage,
           stringResource(R.string.cd_header_artwork),
@@ -68,9 +74,29 @@ fun CardSticker() = Sticker {
 }
 
 @CatalogVariant(
-  of = "Card",
+  of = "ImageCard",
+  props = ["content=no-image"],
+  caption = "The kit's card with its image layer off, which is plain `Card`.",
+)
+@BuilderComponent(component = "Card", canvas = "glimmer/card")
+@Preview
+@Composable
+fun CardNoImageSticker() = Sticker {
+  ContentFrame {
+    Card(
+      title = { Text(glimmerText("title", stringResource(R.string.label_title))) },
+      subtitle = { Text(stringResource(R.string.label_subtitle)) },
+      leadingIcon = { Icon(Icons.Rounded.AccountCircle, stringResource(R.string.cd_sender)) },
+    ) {
+      Text(stringResource(R.string.label_body))
+    }
+  }
+}
+
+@CatalogVariant(
+  of = "ImageCard",
   props = ["content=text-only"],
-  caption = "The bare form: content and nothing else.",
+  caption = "The bare `Card`: content and nothing else.",
 )
 @Preview
 @Composable
@@ -79,9 +105,9 @@ fun CardTextOnlySticker() = Sticker {
 }
 
 @CatalogVariant(
-  of = "Card",
+  of = "ImageCard",
   props = ["content=trailing-icon"],
-  caption = "Icon after the content.",
+  caption = "`Card` with an icon after the content.",
 )
 @Preview
 @Composable
@@ -97,9 +123,9 @@ fun CardTrailingIconSticker() = Sticker {
 }
 
 @CatalogVariant(
-  of = "Card",
+  of = "ImageCard",
   props = ["content=action"],
-  caption = "The kit's action layer, which alpha19 puts on `ActionCard` rather than on `Card`.",
+  caption = "The kit's action layer, which Glimmer puts on `ActionCard` rather than on `Card`.",
 )
 @BuilderComponent(component = "ActionCard", canvas = "glimmer/action-card")
 @Preview
