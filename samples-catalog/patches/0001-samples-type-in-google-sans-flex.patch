@@ -17,7 +17,7 @@
 # plus `@PreviewWrapperClass(GoogleSansFlexPreviewWrapper)`. The wrapper supplies the typography
 # from outside, and the sample's own inner `GlimmerTheme { }` INHERITS it rather than overriding it,
 # because `GlimmerTheme`'s `typography` parameter defaults to the ambient `GlimmerTheme.typography`
-# — verified against glimmer-1.0.0-alpha19.aar, whose default branch calls
+# — verified against glimmer-1.0.0-alpha20 (and alpha19 before it), whose default branch calls
 # `GlimmerTheme$Companion.getTypography`, which reads `_localGlimmerTheme.current.typography`.
 #
 # Preview ids derive from the function, not the annotation, so nothing downstream moves:
@@ -116,7 +116,7 @@ index 7726541..40d9253 100644
  private fun LargeButtonWithLeadingAndTrailingIconPreview() {
      GlimmerTheme { LargeButtonWithLeadingAndTrailingIconSample() }
 diff --git a/androidx/xr/glimmer/samples/CardSamples.kt b/androidx/xr/glimmer/samples/CardSamples.kt
-index 6b68f0a..e2ab88c 100644
+index 375834b..328523a 100644
 --- a/androidx/xr/glimmer/samples/CardSamples.kt
 +++ b/androidx/xr/glimmer/samples/CardSamples.kt
 @@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.painter.BrushPainter
@@ -128,9 +128,9 @@ index 6b68f0a..e2ab88c 100644
  import androidx.xr.glimmer.ActionCard
  import androidx.xr.glimmer.Button
  import androidx.xr.glimmer.Card
-@@ -209,61 +209,61 @@ fun CardWithTitleAndSubtitleAndLeadingIconAndTrailingIconLongText() {
-     }
- }
+@@ -260,73 +260,73 @@ fun TrailingImageCardSample() {
+ // Previews
+ // -------------------------------------------------------------------------------------------------
  
 -@Preview
 +@GlimmerSamplePreview
@@ -156,34 +156,6 @@ index 6b68f0a..e2ab88c 100644
 -@Preview
 +@GlimmerSamplePreview
  @Composable
- private fun CardWithTitleAndHeaderPreview() {
-     GlimmerTheme { CardWithTitleAndHeaderSample() }
- }
- 
--@Preview
-+@GlimmerSamplePreview
- @Composable
- private fun ActionCardWithTitlePreview() {
-     GlimmerTheme { ActionCardWithTitleSample() }
- }
- 
--@Preview
-+@GlimmerSamplePreview
- @Composable
- private fun CardWithTitleAndLeadingIconAndHeaderPreview() {
-     GlimmerTheme { CardWithTitleAndLeadingIconAndHeader() }
- }
- 
--@Preview
-+@GlimmerSamplePreview
- @Composable
- private fun ActionCardWithTitleAndLeadingIconAndHeaderPreview() {
-     GlimmerTheme { ActionCardWithTitleAndLeadingIconAndHeader() }
- }
- 
--@Preview
-+@GlimmerSamplePreview
- @Composable
  private fun CardWithLongTextPreview() {
      GlimmerTheme { CardWithLongText() }
  }
@@ -200,6 +172,48 @@ index 6b68f0a..e2ab88c 100644
  @Composable
  private fun CardWithTitleAndSubtitleAndLeadingIconAndTrailingIconLongTextPreview() {
      GlimmerTheme { CardWithTitleAndSubtitleAndLeadingIconAndTrailingIconLongText() }
+ }
+ 
+-@Preview
++@GlimmerSamplePreview
+ @Composable
+ private fun ActionCardWithTitlePreview() {
+     GlimmerTheme { ActionCardWithTitleSample() }
+ }
+ 
+-@Preview
++@GlimmerSamplePreview
+ @Composable
+ private fun ActionCardWithTitleAndLeadingIconPreview() {
+     GlimmerTheme { ActionCardWithTitleAndLeadingIcon() }
+ }
+ 
+-@Preview
++@GlimmerSamplePreview
+ @Composable
+ private fun ImageCardPreview() {
+     GlimmerTheme { ImageCardSample() }
+ }
+ 
+-@Preview
++@GlimmerSamplePreview
+ @Composable
+ private fun ImageCardWithTitleAndSubtitleAndLeadingIconPreview() {
+     GlimmerTheme { ImageCardWithTitleAndSubtitleAndLeadingIconSample() }
+ }
+ 
+-@Preview
++@GlimmerSamplePreview
+ @Composable
+ private fun LeadingImageCardPreview() {
+     GlimmerTheme { LeadingImageCardSample() }
+ }
+ 
+-@Preview
++@GlimmerSamplePreview
+ @Composable
+ private fun TrailingImageCardPreview() {
+     GlimmerTheme { TrailingImageCardSample() }
 diff --git a/androidx/xr/glimmer/samples/ColorsSamples.kt b/androidx/xr/glimmer/samples/ColorsSamples.kt
 index 49aaa33..a17cb43 100644
 --- a/androidx/xr/glimmer/samples/ColorsSamples.kt
@@ -317,6 +331,35 @@ index e7237d4..4666603 100644
  @Composable
  private fun IconButtonPreview() {
      GlimmerTheme { IconButtonSample() }
+diff --git a/androidx/xr/glimmer/samples/IconMarkerSamples.kt b/androidx/xr/glimmer/samples/IconMarkerSamples.kt
+index 1cacc27..6b8c2db 100644
+--- a/androidx/xr/glimmer/samples/IconMarkerSamples.kt
++++ b/androidx/xr/glimmer/samples/IconMarkerSamples.kt
+@@ -18,7 +18,7 @@ package androidx.xr.glimmer.samples
+ 
+ import androidx.annotation.Sampled
+ import androidx.compose.runtime.Composable
+-import androidx.compose.ui.tooling.preview.Preview
++import ee.schimke.m3catalog.glimmersamples.GlimmerSamplePreview
+ import androidx.xr.glimmer.GlimmerTheme
+ import androidx.xr.glimmer.Icon
+ import androidx.xr.glimmer.IconMarker
+@@ -44,13 +44,13 @@ fun IconMarkerWithCustomIconSample() {
+     )
+ }
+ 
+-@Preview
++@GlimmerSamplePreview
+ @Composable
+ private fun IconMarkerPreview() {
+     GlimmerTheme { IconMarkerSample() }
+ }
+ 
+-@Preview
++@GlimmerSamplePreview
+ @Composable
+ private fun IconMarkerWithCustomIconSamplePreview() {
+     GlimmerTheme { IconMarkerWithCustomIconSample() }
 diff --git a/androidx/xr/glimmer/samples/IconSamples.kt b/androidx/xr/glimmer/samples/IconSamples.kt
 index 657e6ab..a39e164 100644
 --- a/androidx/xr/glimmer/samples/IconSamples.kt

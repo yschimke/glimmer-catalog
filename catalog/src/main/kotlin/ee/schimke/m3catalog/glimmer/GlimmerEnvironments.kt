@@ -41,8 +41,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.xr.glimmer.Button
-import androidx.xr.glimmer.Card
 import androidx.xr.glimmer.Icon
+import androidx.xr.glimmer.ImageCard
 import androidx.xr.glimmer.Text
 import ee.schimke.composeai.preview.GlimmerEnvironment
 import ee.schimke.composeai.preview.GlimmerEnvironmentPreview
@@ -60,8 +60,8 @@ private fun EnvironmentButton() {
 @Composable
 private fun EnvironmentCard() {
   ContentFrame {
-    Card(
-      header = {
+    ImageCard(
+      image = {
         Image(
           HeaderImage,
           stringResource(R.string.cd_header_artwork),

@@ -17,7 +17,7 @@ Glimmer cannot take that lane, and the reason is packaging rather than taste:
 
 | | |
 | --- | --- |
-| `androidx.xr.glimmer:glimmer:1.0.0-alpha19` | `<packaging>aar</packaging>` |
+| `androidx.xr.glimmer:glimmer:1.0.0-alpha20` | `<packaging>aar</packaging>` |
 | AAR metadata | `minCompileSdk=37` |
 | Compose Multiplatform port | none |
 
@@ -216,7 +216,7 @@ job copies it into place. It replaced a `design-map-command` that projected an e
   | --- | --- |
   | `Disabled+Focused` (6) | a disabled Glimmer component takes no focus: pinned `enabled = false`, the focus-driven capture is BYTE-IDENTICAL to the resting one. The render is its `Disabled` render, and a duplicate cell is a build failure here. [#392](https://github.com/yschimke/m3-catalog/issues/392) |
   | `State=Hovered` (2, `List Item` only) | Glimmer draws no hover treatment — measured byte-identical to the resting capture — because a glasses surface has no pointer. The kit's `List Item` set is the one that names `Hovered` where its siblings name `Focused`; this catalog draws the focus Glimmer actually has. [#392](https://github.com/yschimke/m3-catalog/issues/392) |
-  | `List Item` `State=Disabled` (2) | alpha19's `ListItem` has **no `enabled` parameter**. There is no call that draws a disabled row — an upstream gap rather than a missing sticker, declared as `ListItemDisabled` in `glimmer-kit-gaps.json` |
+  | `List Item` `State=Disabled` (2) | alpha20's `ListItem` has **no `enabled` parameter**. There is no call that draws a disabled row — an upstream gap rather than a missing sticker, declared as `ListItemDisabled` in `glimmer-kit-gaps.json` |
   | `List Item` `Type=Card` (4) | Glimmer publishes `Card` and `ListItem` as separate components and no card-shaped row type on `ListItem`. Declared as `ListItemCard` in `glimmer-kit-gaps.json` |
 
   The first two rows are a different kind of gap from the rest, and
@@ -272,7 +272,7 @@ job copies it into place. It replaced a `design-map-command` that projected an e
 
   - **Kit to code.** The sets this catalog does not draw are declared, with the reason and the
     evidence, and the declaration fails if the node disappears or if a sticker starts mapping it —
-    Entity, the four progress indicators, the `ListItem` cells alpha19 exposes no parameter for, and
+    Entity, the four progress indicators, the `ListItem` cells alpha20 exposes no parameter for, and
     the Styles-page token specimens.
   - **Code to kit.** Every public component composable the pinned library exports is either invoked
     by a sticker or named in a declaration. Button groups
@@ -312,9 +312,12 @@ Two changes, both of them #381's own options:
 `ListItem`, and the kit's full content set on `Card` — header image, entity, title, subtitle, body.
 The BARE forms did not disappear; they inverted into variants (`content=label-only`,
 `content=text-only`), which is the honest taxonomy once the populated form is what the kit publishes
-as the base. `Card`'s `Show Action` layer is the one the base cannot carry — alpha19 puts the action
+as the base. `Card`'s `Show Action` layer is one the base cannot carry — Glimmer puts the action
 slot on `ActionCard`, and a sticker published as `Card` has to invoke `Card` — so it folds in as
-`content=action`, the treatment `AGENTS.md` gives every "it is a separate composable" axis.
+`content=action`, the treatment `AGENTS.md` gives every "it is a separate composable" axis. alpha20
+did the same to the header image: `Card` lost its `header` slot and the image moved to
+`ImageCard`, so `Show Image` folds in as `content=image` and the base keeps entity, title,
+subtitle and body.
 
 **`Card` and `ListItem` are bound to the kit's 420dp column** (`ContentFrame`), where they were
 filling the 960dp glasses display #376 made the wrap sandbox — 2.3x the width the kit draws them at.
@@ -568,16 +571,29 @@ One file stays quarantined for the same class of reason: `IconMarkerSamples.kt` 
 skew expected to disappear on its own — when the pin moves to a release that ships it, re-running
 the import without the entry is the check.
 
+### alpha20
+
+The 1.0.0-alpha20 pin was not left to the compiler. The release's `-sources.jar` is published, so
+every library `.kt` in it was hashed with `git hash-object` and compared with
+`xr/glimmer/glimmer/src/main/java` at each glimmer-touching commit on `androidx-main`. The tree
+matches exactly from `bec77af6` (2026-09-16) until `cd72ecdb` (*"Add focused color customization to
+Button"*, merged 2026-09-23, the publish date) changes it. The pin is the main-line merge immediately
+before that one, `429b81ad`, so the samples are the ones written against the shipped API.
+
+`IconMarkerSamples.kt` left quarantine as predicted, and the import gained `AlertDialogSamples.kt`.
+Upstream gives the latter no `@Preview`, so it compiles but publishes nothing. `samples-spec.mjs`
+drops a file with no previews rather than publishing an empty group.
+
 ## What is built
 
 | | |
 | --- | --- |
-| `:catalog` | 12 components, 56 previews (26 stickers, 22 state cells, 8 environment composites), all rendering |
-| `:samples-catalog` | 19 files vendored, 1 quarantined, 0 patches; 50 previews, all rendering, none blank; published WITH a live bundle |
+| `:catalog` | 12 components, 57 previews (27 stickers, 22 state cells, 8 environment composites), all rendering |
+| `:samples-catalog` | 21 files vendored, 0 quarantined, 1 patch; 54 previews; published WITH a live bundle |
 | `androidx.annotation.Sampled` | a second local shim, beside `:samples-catalog`'s, because no published artifact provides it |
 | `design-artifacts.yml` | two more `uses:` blocks and a `glimmer` output on the Scope job |
 | `design-map.json` | the twelve kit references, projected from the annotations |
-| `samples-catalog/catalog.spec.json` | 18 groups, 50 components, generated by `scripts/samples-spec.mjs` |
+| `samples-catalog/catalog.spec.json` | 19 groups, 54 components, generated by `scripts/samples-spec.mjs` |
 
 ## The copy is a resource, in this module's own lane
 

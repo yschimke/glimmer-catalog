@@ -291,7 +291,16 @@ export function applyPatches(out, dir = PATCH_DIR) {
       // Applied with `out` as the working directory rather than via `--directory`, because `out` is
       // a temp directory under `--check` and git refuses a `--directory` path outside the work tree
       // ("invalid path"). The patch paths are therefore repo-relative to the vendored tree itself.
-      run("git", ["apply", "-p1", resolve(dir, patch)], { cwd: out });
+      //
+      // The ceiling stops git discovering THIS repository from `out`. Without it, an import into
+      // the committed tree (a subdirectory of the work tree) reads the patch paths relative to the
+      // repository root, finds none of them under the cwd, skips every hunk — "patched paths
+      // outside the directory are ignored" — and exits 0: the patch is reported applied and is
+      // absent. Only `--check`'s temp directory, outside any repository, applied it for real.
+      run("git", ["apply", "-p1", resolve(dir, patch)], {
+        cwd: out,
+        env: { ...process.env, GIT_CEILING_DIRECTORIES: dirname(resolve(out)) },
+      });
     } catch (error) {
       const detail = error.stderr?.toString().trim() || error.message;
       throw new Error(

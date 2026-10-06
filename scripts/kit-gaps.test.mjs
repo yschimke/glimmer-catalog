@@ -46,12 +46,15 @@ test("every declaration names the issue that records it", () => {
       ["ListItemDisabled", 374],
       ["ListItemCard", 374],
       ["Styles", 432],
+      ["SideImageCard", 22],
+      ["AlertDialog", 22],
+      ["IconMarker", 22],
     ],
   );
 });
 
 test("the checker reads the pin Renovate owns", () => {
-  assert.equal(pinnedVersion(read("gradle/libs.versions.toml"), "glimmer"), "1.0.0-alpha19");
+  assert.equal(pinnedVersion(read("gradle/libs.versions.toml"), "glimmer"), "1.0.0-alpha20");
   assert.equal(pinnedVersion('foo = "1.2"\n', "bar"), null);
 });
 
@@ -59,10 +62,10 @@ test("a library bump fails until the new API surface is re-read", () => {
   const input = committed();
   const findings = checkGaps({
     ...input,
-    versions: input.versions.replace('glimmer = "1.0.0-alpha19"', 'glimmer = "1.0.0-alpha20"'),
+    versions: input.versions.replace('glimmer = "1.0.0-alpha20"', 'glimmer = "1.0.0-alpha21"'),
   });
   assert.equal(findings.length, 1);
-  assert.match(findings[0], /pinned at 1\.0\.0-alpha20/);
+  assert.match(findings[0], /pinned at 1\.0\.0-alpha21/);
 });
 
 test("a kit node that gains a sticker closes its gap, loudly", () => {

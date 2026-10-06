@@ -82,7 +82,7 @@ const SAMPLE_TO_KIT = new Map([
  * applied after the copy, and a generator that only understood the patched form would fail against
  * the import it is supposed to describe.
  *
- * Every one of the 50 previews in the vendored tree is written this way, and the constraints that
+ * Every one of the 54 previews in the vendored tree is written this way, and the constraints that
  * look incidental are the ones worth keeping. Zero-argument excludes a `@PreviewParameter` sample,
  * whose renders are a set rather than the one sticker a component entry promises; a bare `@Preview`
  * excludes one that sets its own `widthDp` or `uiMode`, which would need the spec to say so. If
@@ -90,7 +90,7 @@ const SAMPLE_TO_KIT = new Map([
  * component entry that describes something else.
  *
  * `private` is optional because exactly one sample — `GlimmerHorizontalPagerSamplePreview` — is
- * public while the other 49 are not. Nothing about the render depends on it.
+ * public while the other 53 are not. Nothing about the render depends on it.
  */
 const PREVIEW = /@(?:GlimmerSample)?Preview\s*\n\s*@Composable\s*\n\s*(?:private\s+)?fun (\w+)\(\)\s*\{/g;
 
@@ -190,8 +190,8 @@ export function buildGroups(dir = VENDORED, kitIds = new Set()) {
     const previews = scan(file, dir);
     // A file whose samples upstream never previews contributes nothing to render, so it
     // contributes no group: an empty `components` is not valid against the schema, and a group
-    // holding one would be a heading over nothing. `VoiceInputIndicatorSamples.kt` is the case —
-    // its sample exists, its preview does not.
+    // holding one would be a heading over nothing. `VoiceInputIndicatorSamples.kt` and
+    // `AlertDialogSamples.kt` are the cases — their samples exist, their previews do not.
     if (previews.length === 0) continue;
     groups.push({
       name: api,

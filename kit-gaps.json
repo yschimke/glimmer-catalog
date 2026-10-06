@@ -29,14 +29,14 @@
   "library": {
     "coordinate": "androidx.xr.glimmer:glimmer",
     "versionRef": "glimmer",
-    "version": "1.0.0-alpha19",
+    "version": "1.0.0-alpha20",
     "$comment": [
       "The API surface every `api-gap` below was read from. `version` must equal the",
       "`glimmer` entry in gradle/libs.versions.toml; Renovate owns that pin, so the day it",
       "moves this file fails until somebody re-reads the AAR.",
       "",
       "Read from the published AAR's classes, not from documentation. `components` below is",
-      "that surface: every public component composable alpha19 exports. 1.0.0-alpha19 is",
+      "that surface: every public component composable alpha20 exports. 1.0.0-alpha20 is",
       "also the newest version the androidx maven repository publishes, so `none published",
       "yet` in a declaration means exactly that, not `not in the version we happen to pin`.",
       "",
@@ -47,6 +47,7 @@
     ],
     "components": [
       "ActionCard",
+      "AlertDialog",
       "Button",
       "ButtonGroup",
       "Card",
@@ -56,11 +57,15 @@
       "GlimmerLazyList",
       "Icon",
       "IconButton",
+      "IconMarker",
       "IconToggleButton",
+      "ImageCard",
+      "LeadingImageCard",
       "ListItem",
       "Text",
       "TitleChip",
       "ToggleButton",
+      "TrailingImageCard",
       "VerticalStack",
       "VoiceInputIndicator"
     ]
@@ -83,7 +88,7 @@
       "issue": 431,
       "kitNodes": ["40000036:1823"],
       "reason": "The kit's Entity set covers avatar, contained icon, monogram, adaptive product, image, app, system and progress presentations at several sizes. Glimmer publishes no Entity composable; `Icon` is one content primitive that an Entity would contain, not an implementation of it. Mapping `Icon` to this set would break the exact named-API rule and make the render claim to depict a component it never invokes.",
-      "evidence": "alpha19's AAR exports IconKt.Icon and no Entity of any kind. `IconSamples.kt` stays a sample in `samples-catalog`, which is upstream's preview rather than a mapped component; bare Icon has no kit node of its own either.",
+      "evidence": "alpha20's AAR exports IconKt.Icon and no Entity of any kind. `IconSamples.kt` stays a sample in `samples-catalog`, which is upstream's preview rather than a mapped component; bare Icon has no kit node of its own either.",
       "closesWhen": "Glimmer publishes an Entity composable, or the kit publishes an Icon set."
     },
     {
@@ -92,7 +97,7 @@
       "issue": 433,
       "kitNodes": ["40000116:7798", "40000116:8540", "40000116:7840", "40000116:8038"],
       "reason": "Four published progress component sets under the kit's Progress indicator frame (40000116:7000), with no Glimmer API to invoke. Rebuilding them from lower-level drawing primitives would put a replica in the inventory that tests nothing the library ships.",
-      "evidence": "alpha19's AAR exports no progress-indicator composable — no ProgressIndicator, no LinearProgressIndicator, no CircularProgressIndicator — and 1.0.0-alpha19 is the newest version androidx publishes, so no release exposes these yet.",
+      "evidence": "alpha20's AAR exports no progress-indicator composable — no ProgressIndicator, no LinearProgressIndicator, no CircularProgressIndicator — and 1.0.0-alpha20 is the newest version androidx publishes, so no release exposes these yet.",
       "closesWhen": "A Glimmer release exposes the progress APIs. Each set then lands in its own PR, with its variant axes folded behind the default sticker and the set added to figma-kit-index.json with strict map coverage."
     },
     {
@@ -103,7 +108,7 @@
       "api": "androidx.xr.glimmer.list.GlimmerLazyList",
       "sample": "samples-catalog/src/main/kotlin/upstream/androidx/xr/glimmer/samples/GlimmerLazyListSamples.kt",
       "reason": "The orientation-parameterised base of `GlimmerLazyColumn`. The kit publishes `1-line list` and `2-line list`, which the column sticker is already the rendition of; a second component invoking the generic overload would resolve to the same nodes and publish one picture under two names.",
-      "evidence": "alpha19's GlimmerLazyListKt exports GlimmerLazyColumn and GlimmerLazyList(orientation, …); the kit's list sets carry no orientation axis to distinguish them.",
+      "evidence": "alpha20's GlimmerLazyListKt exports GlimmerLazyColumn and GlimmerLazyList(orientation, …); the kit's list sets carry no orientation axis to distinguish them.",
       "closesWhen": "The kit publishes a horizontal list node."
     },
     {
@@ -111,8 +116,8 @@
       "kind": "api-gap",
       "issue": 374,
       "kitNodes": ["40000113:6885", "40000113:6931"],
-      "reason": "The kit publishes a disabled row at both line counts. alpha19's `ListItem` takes no `enabled` parameter at all, so there is no call this catalog could make that draws one — which is why the list stickers carry `@GlimmerInteractionStates` rather than `@GlimmerStates`.",
-      "evidence": "alpha19's ListItemKt exposes `ListItem` with content slots, an `onClick` and no `enabled`; the disabled treatment is not reachable from any overload.",
+      "reason": "The kit publishes a disabled row at both line counts. alpha20's `ListItem` takes no `enabled` parameter at all, so there is no call this catalog could make that draws one — which is why the list stickers carry `@GlimmerInteractionStates` rather than `@GlimmerStates`.",
+      "evidence": "alpha20's ListItemKt exposes `ListItem` with content slots, an `onClick` and no `enabled`; the disabled treatment is not reachable from any overload.",
       "closesWhen": "Glimmer gives `ListItem` an `enabled` parameter."
     },
     {
@@ -121,7 +126,7 @@
       "issue": 374,
       "kitNodes": ["384:4193", "384:4196", "384:4190", "40000113:6901"],
       "reason": "The kit's `List Item` set carries a third `Type` value, `Card`, at all four states. Glimmer publishes `Card` and `ListItem` as separate components and no card-shaped row type on `ListItem`; drawing a Card inside a list and calling it a ListItem cell would map pixels to an API that was never invoked.",
-      "evidence": "alpha19's ListItemKt has no type or shape parameter — `Type=1-line` and `Type=2-line` are the supporting-label slot, and nothing reaches the Card row.",
+      "evidence": "alpha20's ListItemKt has no type or shape parameter — `Type=1-line` and `Type=2-line` are the supporting-label slot, and nothing reaches the Card row.",
       "closesWhen": "Glimmer publishes a card row type on `ListItem`."
     },
     {
@@ -148,6 +153,42 @@
       "reason": "Shapes, Colors, Typography, Surface and DepthEffectLevels are token types, and their design counterparts are specimens on the kit's `🎨 Styles` page rather than component sets on `🧩 Components`. Publishing them as @CatalogComponent cards would blur token documentation into the component inventory and invent an exact component reference the kit does not offer.",
       "evidence": "The Styles specimens are imported read-only as the eight pages listed above, addressable by node id through design/pages/pages.json — which is the generated token inventory, and the only one the kit supports without a component set to point at. The samples stay in `samples-catalog` as upstream's own previews.",
       "closesWhen": "The catalog schema gains an explicit token/foundation representation, or the kit publishes a component set per token type. Each token type then lands in its own PR."
+    },
+    {
+      "id": "SideImageCard",
+      "kind": "sample-only",
+      "issue": 22,
+      "apis": ["LeadingImageCard", "TrailingImageCard"],
+      "api": "androidx.xr.glimmer.LeadingImageCard",
+      "sample": "samples-catalog/src/main/kotlin/upstream/androidx/xr/glimmer/samples/CardSamples.kt",
+      "absentFromKit": "(leading|trailing) ?image",
+      "reason": "alpha20 adds two cards that put the image BESIDE the content rather than above it. The kit's `Card` set (416:2700) carries its image as a `Show Image` layer above the title, which is what `ImageCard` draws and what the `Card` `content=image` variant renders; it has no layer or axis for a side image, so mapping these to it would publish a layout the node does not depict.",
+      "evidence": "alpha20's Card.kt exports ImageCard, LeadingImageCard and TrailingImageCard, and removes `Card`'s `header` slot; alpha19 exported none of the three. The Cards page (4116:3165) caches only the `Card` set and its instances, and no cached node is named like a leading or trailing image. The samples render in `samples-catalog` as upstream's own previews.",
+      "closesWhen": "The kit publishes a side-image card node. Each then lands in its own PR."
+    },
+    {
+      "id": "AlertDialog",
+      "kind": "sample-only",
+      "issue": 22,
+      "apis": ["AlertDialog"],
+      "api": "androidx.xr.glimmer.AlertDialog",
+      "sample": "samples-catalog/src/main/kotlin/upstream/androidx/xr/glimmer/samples/AlertDialogSamples.kt",
+      "absentFromKit": "dialog",
+      "reason": "alpha20 adds `AlertDialog`; the kit's `🧩 Components` page lays out no dialog. A component with no exact kit cell does not enter the inventory.",
+      "evidence": "alpha20's AlertDialog.kt exports AlertDialog(onDismissRequest, confirmButton, text, …); alpha19 did not. No cached page carries a node whose name contains `dialog`. Upstream's AlertDialogSamples.kt is vendored but declares no @Preview, so it has no render in `samples-catalog` either.",
+      "closesWhen": "The kit publishes a dialog node."
+    },
+    {
+      "id": "IconMarker",
+      "kind": "sample-only",
+      "issue": 22,
+      "apis": ["IconMarker"],
+      "api": "androidx.xr.glimmer.IconMarker",
+      "sample": "samples-catalog/src/main/kotlin/upstream/androidx/xr/glimmer/samples/IconMarkerSamples.kt",
+      "absentFromKit": "marker",
+      "reason": "alpha20 adds `IconMarker`; the kit publishes no marker node. `IconMarkerDefaults.DotIcon` is its default content rather than a component of its own.",
+      "evidence": "alpha20's IconMarker.kt exports IconMarker (clickable and non-clickable); the alpha19 AAR contained no IconMarker class, which is why IconMarkerSamples.kt was quarantined until this pin. No cached page carries a node whose name contains `marker`. The samples render in `samples-catalog`.",
+      "closesWhen": "The kit publishes an icon marker node."
     }
   ]
 }

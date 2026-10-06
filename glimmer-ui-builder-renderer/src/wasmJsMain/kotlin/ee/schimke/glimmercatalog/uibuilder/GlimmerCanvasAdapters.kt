@@ -19,6 +19,7 @@ import androidx.xr.glimmer.ContainedVoiceInputIndicator
 import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.IconButton
 import androidx.xr.glimmer.IconToggleButton
+import androidx.xr.glimmer.ImageCard
 import androidx.xr.glimmer.ListItem
 import androidx.xr.glimmer.Text
 import androidx.xr.glimmer.TitleChip
@@ -124,6 +125,19 @@ internal val glimmerCanvasAdapters = canvasAdapterRegistry {
     val canvas = this
     ActionCard(
       action = { canvas.Slot("action") },
+      modifier = modifier,
+      title = optionalSlot("title"),
+      subtitle = optionalSlot("subtitle"),
+      leadingIcon = optionalSlot("leadingIcon"),
+      trailingIcon = optionalSlot("trailingIcon"),
+    ) {
+      canvas.Slot("content")
+    }
+  }
+  register("glimmer/image-card") {
+    val canvas = this
+    ImageCard(
+      image = { canvas.Slot("image") },
       modifier = modifier,
       title = optionalSlot("title"),
       subtitle = optionalSlot("subtitle"),

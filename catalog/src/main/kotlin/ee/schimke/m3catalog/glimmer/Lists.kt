@@ -32,7 +32,7 @@ import ee.schimke.composeai.preview.CatalogVariant
 // which is half of what #382 reports; the other half is `TitleChip` and `VoiceInputIndicator`,
 // where nothing at the call site can supply one.
 //
-// What is missing and cannot be authored: the kit's `State=Disabled` cell (`384:4192`). alpha19's
+// What is missing and cannot be authored: the kit's `State=Disabled` cell (`384:4192`). alpha20's
 // `ListItem` has no `enabled` parameter at all, so there is no call that draws a disabled row —
 // which is why these carry `@GlimmerInteractionStates` rather than `@GlimmerStates`.
 

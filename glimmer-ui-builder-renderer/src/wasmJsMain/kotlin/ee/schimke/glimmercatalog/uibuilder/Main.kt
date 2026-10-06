@@ -45,6 +45,7 @@ private val componentIds =
     "glimmer/icon",
     "glimmer/icon-button",
     "glimmer/icon-toggle-button",
+    "glimmer/image-card",
     "glimmer/list-item",
     "glimmer/text",
     "glimmer/title-chip",
