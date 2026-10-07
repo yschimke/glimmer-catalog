@@ -37,7 +37,7 @@ jobs:
       - uses: actions/checkout@v7.0.1
         with:
           repository: yschimke/compose-ai-tools
-          ref: main
+          ref: v2.35.0
           path: compose-ai-tools
           persist-credentials: false
       # The validators moved out of compose-ai-tools' scripts/design-artifacts into the
