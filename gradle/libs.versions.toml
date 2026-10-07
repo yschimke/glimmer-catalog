@@ -15,11 +15,11 @@ composePreviewPlugin = "2.35.0"
 # so per-module versions diverge (the 3.13.0 BOM pins preview-annotations at 3.13.0 but
 # data-preview-overrides-runtime and data-glimmer-environment-connector at 3.12.0) and a direct pin
 # at the release version 404s the first time a release skips a module.
-# Keep this EQUAL to the daemon version the compose-preview plugin above bakes in (plugin 2.32.4
-# bakes daemon 3.13.1), so the catalog compiles against the runtime the renderer hosts.
+# Keep this EQUAL to the daemon version the compose-preview plugin above bakes in (plugin 2.35.0
+# bakes daemon 3.13.2), so the catalog compiles against the runtime the renderer hosts.
 # :verifyComposePreviewDaemonAlignment (root build.gradle.kts) fails the build when they differ.
 # Renovate never moves this on its own (.github/renovate.json): bump it in the plugin's PR.
-composePreviewDaemon = "3.13.1"
+composePreviewDaemon = "3.13.2"
 
 [libraries]
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
