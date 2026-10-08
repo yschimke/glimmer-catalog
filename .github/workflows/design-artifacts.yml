@@ -15,6 +15,7 @@ on:
     paths:
       - 'catalog/**'
       - 'ui-builder.policy.json'
+      - 'ui-builder/**'
       - 'glimmer-ui-builder-renderer/**'
       - 'samples-catalog/**'
       - 'design-map.json'
