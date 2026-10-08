@@ -32,6 +32,12 @@
       "Voice input"
     ]
   },
+  "$comment_templates": "The New design chooser's starting points, as branch-relative paths the design-artifacts pipeline copies from ui-builder/designs/ onto the delivery branch beside ui-builder.json. Each is a 960×720dp glasses frame (frame.seedDevice) built from real Glimmer components on the builder's column, so a new design opens on the additive display's black rather than the generic phone scaffold. There is deliberately no composeSourceExport: compose-ui-builder ships no Glimmer emitter, and a declaration naming one it does not ship would make the host refuse the catalog's exports rather than offer none.",
+  "templates": [
+    "ui-builder/designs/glasses-card.json",
+    "ui-builder/designs/glasses-list.json",
+    "ui-builder/designs/glasses-prompt.json"
+  ],
   "colorTokens": {
     "roles": [
       "background",
@@ -43,10 +49,32 @@
     ]
   },
   "builtins": {},
+  "$comment_components": "`glimmer/icon` declares its properties because Glimmer's Icon(imageVector, contentDescription) has no parameter a design can carry as data, so the palette offered an icon nothing could configure. The three are the ones glimmer-ui-builder-renderer's `glimmer/icon` adapter already reads; the key stands in for the ImageVector exactly as m3-catalog's Icon does.",
   "components": {
     "glimmer/icon": {
       "record": "catalog/androidx.xr.glimmer.IconKt.Icon",
-      "canvas": "glimmer/icon"
+      "canvas": "glimmer/icon",
+      "propertyCapabilities": [
+        {
+          "name": "iconKey",
+          "jsonType": "string",
+          "required": true,
+          "notes": "A Material icon key from the builder's icon catalog (`filled/info`, `rounded/callEnd`), drawn by the renderer runtime through googleMaterialIconImageVector. Glimmer's Icon takes an ImageVector, which no design can hold as data, so the key stands in for it exactly as m3-catalog's Icon does."
+        },
+        {
+          "name": "contentDescription",
+          "jsonType": [
+            "string",
+            "null"
+          ],
+          "required": false
+        },
+        {
+          "name": "sizeDp",
+          "jsonType": "number",
+          "required": false
+        }
+      ]
     },
     "glimmer/text": {
       "record": "catalog/androidx.xr.glimmer.TextKt.Text",

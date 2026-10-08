@@ -23,6 +23,13 @@ drawing labelled placeholders. Its UI Builder SDK checkout is pinned by
 `glimmer-ui-builder-renderer/compose-ui-builder.ref` and the Design Artifacts workflow publishes the
 verified archive as `ui-builder/runtime.zip`.
 
+The policy's `templates` name the New design chooser's starting points, under
+[`ui-builder/designs/`](ui-builder/designs): `glasses-card`, `glasses-list` and `glasses-prompt`, each
+a 960×720dp glasses frame of real Glimmer components. A UI builder reads them once it serves this
+catalog as catalog-owned (`--ui-builder-catalog-ownership`, compose-ui-builder's
+`UI_BUILDER_CATALOG_CUTOVER.md`); until then it offers the generic phone blank. The catalog declares
+no `composeSourceExport`, because compose-ui-builder ships no Glimmer emitter yet.
+
 ## Compose Multiplatform port
 
 [`vendor/glimmer`](vendor/README.md) carries the exact AndroidX Glimmer alpha20 sources jar and

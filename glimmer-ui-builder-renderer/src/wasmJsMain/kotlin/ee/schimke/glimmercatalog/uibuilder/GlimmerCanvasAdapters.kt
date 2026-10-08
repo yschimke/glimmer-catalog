@@ -164,6 +164,9 @@ internal val glimmerCanvasAdapters = canvasAdapterRegistry {
       canvas.Slot("content")
     }
   }
+  // No `onTextLayout = ::recordTextLayout`: the SDK accepts a text layout only from the protocol's
+  // native text adapters (`m3/text`, `material3/Text`, `wear-m3/text`) and throws for any other
+  // id, which took the whole canvas down the first time a design held a `glimmer/text`.
   register("glimmer/text") {
     Text(
       text = string("text", "Text"),
@@ -171,7 +174,6 @@ internal val glimmerCanvasAdapters = canvasAdapterRegistry {
       softWrap = boolean("softWrap", true),
       maxLines = integer("maxLines", Int.MAX_VALUE).coerceAtLeast(1),
       minLines = integer("minLines", 1).coerceAtLeast(1),
-      onTextLayout = ::recordTextLayout,
     )
   }
   register("glimmer/icon") {
