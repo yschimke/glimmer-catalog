@@ -15,6 +15,9 @@ on:
     paths:
       - 'catalog/**'
       - 'ui-builder.policy.json'
+      # The catalog's design guidelines, published beside the policy for the UI builder's check. A
+      # guidelines-only edit must republish just as a policy-only edit does.
+      - 'ui-builder.guidelines.json'
       - 'ui-builder/**'
       - 'glimmer-ui-builder-renderer/**'
       - 'samples-catalog/**'
