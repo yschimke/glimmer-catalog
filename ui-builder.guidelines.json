@@ -1,0 +1,174 @@
+{
+  "schema": "compose-ui-builder/catalog-guidelines/v1",
+  "catalog": "glimmer-catalog",
+  "platform": "glasses",
+  "version": 1,
+  "about": "AI glasses design guidance (Jetpack Compose Glimmer) from developer.android.com.",
+  "frames": [
+    {
+      "kind": "device"
+    }
+  ],
+  "rules": [
+    {
+      "id": "glasses.cards.single-action",
+      "kind": "structure",
+      "severity": "warning",
+      "guidance": "If a card has an action, it should only contain a single action. Don't have multiple buttons within a card.",
+      "check": "Does every card contain at most one button or action?",
+      "source": "https://developer.android.com/design/ui/ai-glasses/guides/components/cards"
+    },
+    {
+      "id": "glasses.lists.one-per-view",
+      "kind": "structure",
+      "severity": "warning",
+      "guidance": "Don't have more than one list per view; this is overwhelming visually and focus wise.",
+      "check": "Does the screen contain at most one list?",
+      "source": "https://developer.android.com/design/ui/ai-glasses/guides/components/lists"
+    },
+    {
+      "id": "glasses.title-chip.not-an-action",
+      "kind": "structure",
+      "severity": "warning",
+      "guidance": "Don't use title chips as a tapable action prompt, since they do not have a focus state; use a button instead.",
+      "check": "Are title chips used only as labels, never with a click or tap action?",
+      "source": "https://developer.android.com/design/ui/ai-glasses/guides/components/title-chip"
+    },
+    {
+      "id": "glasses.button-group.limits",
+      "kind": "structure",
+      "severity": "warning",
+      "guidance": "Don't grow the button group past 10 buttons. Don't stack multiple button groups. Don't group buttons of different heights together.",
+      "check": "Does each button group have 10 or fewer buttons of one height, with no button group stacked on another?",
+      "source": "https://developer.android.com/design/ui/ai-glasses/guides/components/button-group"
+    },
+    {
+      "id": "glasses.buttons.purposeful",
+      "kind": "structure",
+      "severity": "warning",
+      "guidance": "Don't use a button as a static decorative element. Don't use a toggle button for non binary actions. Don't overwhelm the user's view with too many buttons.",
+      "check": "Does every button have an action, and is every toggle a true on/off choice?",
+      "source": "https://developer.android.com/design/ui/ai-glasses/guides/components/buttons"
+    },
+    {
+      "id": "glasses.surfaces.dark",
+      "kind": "visual",
+      "severity": "warning",
+      "guidance": "Surfaces must be black for highest contrast. Don't use bright or filled surfaces. Don't fill the screen with all white, as this can cause thermal mitigation.",
+      "check": "Are the surfaces black or transparent, with no large bright or white areas?",
+      "source": "https://developer.android.com/design/ui/ai-glasses/guides/styles/color"
+    },
+    {
+      "id": "glasses.color.sparing",
+      "kind": "visual",
+      "severity": "info",
+      "guidance": "Don't use color text for all content. Don't use overly saturated colors.",
+      "check": "Is colored text kept for emphasis only, with body text in the default foreground color and no overly saturated colors?",
+      "source": "https://developer.android.com/design/ui/ai-glasses/guides/styles/color"
+    },
+    {
+      "id": "glasses.icons.unfilled",
+      "kind": "visual",
+      "severity": "info",
+      "guidance": "Use unfilled icons to avoid halation, or light bleed. Use a heavier stroke weight and rounded icon variants; avoid thin strokes.",
+      "check": "Are icons outlined (unfilled) and rounded, with no thin-stroke icons?",
+      "source": "https://developer.android.com/design/ui/ai-glasses/guides/styles/icons"
+    },
+    {
+      "id": "glasses.layout.bottom-anchored",
+      "kind": "visual",
+      "severity": "info",
+      "guidance": "Anchor elements to the bottom of the canvas, to build upwards. Content should avoid being centered vertically.",
+      "check": "Is the content anchored to the bottom of the frame rather than floating at the top or center?",
+      "source": "https://developer.android.com/design/ui/ai-glasses/guides/surfaces/app"
+    },
+    {
+      "id": "glasses.one-thing-at-a-time",
+      "kind": "structure",
+      "severity": "warning",
+      "guidance": "Show only one primary piece of information at a time (for example, using a Stack). Avoid multiple simultaneous cards.",
+      "check": "Is at most one card shown outside a Stack or List?",
+      "source": "kb://android/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
+    },
+    {
+      "id": "glasses.stack-vs-list",
+      "kind": "structure",
+      "severity": "info",
+      "guidance": "If the items are of different types use a stack. If the items are of the same type, use a list. Don't use a title chip with a stack.",
+      "check": "Do Lists hold items of one type and Stacks mixed types, with no TitleChip on a Stack? Answer not_applicable when there is neither.",
+      "source": "kb://android/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
+    },
+    {
+      "id": "glasses.list.sole-scroller",
+      "kind": "structure",
+      "severity": "warning",
+      "guidance": "Scrolling containers like lists should be the only major component on a screen. Avoid placing a scrollable list directly above or below other interactive elements, such as buttons.",
+      "check": "Is a List free of sibling buttons directly above or below it? Answer not_applicable when there is no list.",
+      "source": "https://developer.android.com/develop/xr/jetpack-xr-sdk/jetpack-compose-glimmer/focus"
+    },
+    {
+      "id": "glasses.card.not-in-list-item",
+      "kind": "structure",
+      "severity": "warning",
+      "guidance": "Never embed a card within a List Item.",
+      "check": "Does no ListItem contain a Card? Answer not_applicable when there are no list items.",
+      "source": "kb://android/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
+    },
+    {
+      "id": "glasses.card.click-xor-nested",
+      "kind": "structure",
+      "severity": "warning",
+      "guidance": "Leave onClick as null if the Card contains multiple internal interactive elements, to avoid focus contention.",
+      "check": "Does every clickable Card contain no buttons of its own? Answer not_applicable when no card is clickable.",
+      "source": "kb://android/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
+    },
+    {
+      "id": "glasses.title-chip.short",
+      "kind": "structure",
+      "severity": "warning",
+      "guidance": "Always center text in a title chip. Never let the title chip go to two lines. Keep the label to three words or less.",
+      "check": "Is every TitleChip label three words or fewer, on one line? Answer not_applicable when there are no title chips.",
+      "source": "kb://android/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
+    },
+    {
+      "id": "glasses.icon.trigger-is-icon-button",
+      "kind": "structure",
+      "severity": "warning",
+      "guidance": "If an icon serves as a trigger, then you must use an IconButton.",
+      "check": "Does every tappable icon use an IconButton rather than a clickable Icon? Answer not_applicable when no icon is tappable.",
+      "source": "kb://android/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
+    },
+    {
+      "id": "glasses.icon.no-black-tint",
+      "kind": "structure",
+      "severity": "warning",
+      "guidance": "NEVER use pure black (#000000) for icon tints.",
+      "check": "Is no icon tinted #000000?",
+      "source": "kb://android/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
+    },
+    {
+      "id": "glasses.progress.honest",
+      "kind": "structure",
+      "severity": "info",
+      "guidance": "Don't use a determinate indicator when the processing time is unknown. Keep to one progress indicator at a time.",
+      "check": "Is there at most one progress indicator, indeterminate when it shows loading of unknown length? Answer not_applicable when there are none.",
+      "source": "https://developer.android.com/design/ui/ai-glasses/guides/components/progress"
+    },
+    {
+      "id": "glasses.color.stock-neutrals",
+      "kind": "structure",
+      "severity": "warning",
+      "guidance": "While background, surface, outline, and outlineVariant are marked as customizable, we strongly recommend that you don't customize these values.",
+      "check": "Are the background, surface, outline and outlineVariant colour roles left at their defaults? Answer not_applicable when the design overrides no colour roles.",
+      "source": "https://developer.android.com/develop/xr/jetpack-xr-sdk/jetpack-compose-glimmer/colors"
+    },
+    {
+      "id": "glasses.list-item.uniform",
+      "kind": "structure",
+      "severity": "info",
+      "guidance": "Always use a consistent background color and corner radius for every item. Don't vary these unless you are visually grouping different types of content.",
+      "check": "Do the items of each List share one background and shape? Answer not_applicable when there is no list.",
+      "source": "kb://android/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
+    }
+  ]
+}
