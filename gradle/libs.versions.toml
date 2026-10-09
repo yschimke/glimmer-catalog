@@ -8,7 +8,7 @@ androidx-compose-ui = "1.12.1"
 androidx-compose-material-icons = "1.7.8"
 compose-multiplatform = "1.12.0"
 androidx-annotation = "1.10.0"
-composePreviewPlugin = "2.35.0"
+composePreviewPlugin = "2.35.1"
 # The ONE version for every ee.schimke.composeai runtime module below: they are versionless and
 # resolve through ee.schimke.composeai:compose-preview-daemon-bom, applied as `platform(...)` in each
 # module that uses them. compose-preview-daemon publishes only the modules that changed in a release,
