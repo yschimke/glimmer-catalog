@@ -44,7 +44,7 @@ jobs:
       - name: Install Android 37.0
         run: >-
           "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0'
-      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.37.0
+      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.39.2
         with:
           artifact-repository: yschimke/glimmer-catalog-out
           artifacts-token: ''
@@ -84,7 +84,7 @@ jobs:
       - name: Install Android 37.0
         run: >-
           "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0'
-      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.37.0
+      - uses: yschimke/compose-ai-tools/.github/actions/apply@v2.39.2
         with:
           artifact-repository: yschimke/glimmer-catalog-out
           artifacts-token: ${{ secrets.ARTIFACTS_TOKEN }}
