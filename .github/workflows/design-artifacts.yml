@@ -112,8 +112,18 @@ jobs:
       ui-builder-runtime-task: ':glimmer-ui-builder-renderer:rendererArchive'
       ui-builder-runtime-archive: 'glimmer-ui-builder-renderer/build/distributions/glimmer-ui-builder-renderer.zip'
       ui-builder-runtime-source-ref: ${{ needs.renderer-pin.outputs.ref }}
+      # Check the sheet against ui-builder.guidelines.json before bundling, so the published bundle
+      # carries every preview's verdicts. Advisory: a finding never fails the publish. Results are
+      # cached under `guidelines-glimmer-catalog-` and only previews whose inputs changed are
+      # re-checked, so the first publishes seed the cache at up to the cap per run and later ones
+      # cost little. compose-preview-publish.yml reads that cache for the PR check.
+      guidelines: true
+      guidelines-max-cost: '1.00'
     secrets:
       artifacts_token: ${{ secrets.ARTIFACTS_TOKEN }}
+      # Only the guidelines step reads it, from the environment. Absent, the check is skipped with
+      # a warning and the catalog still publishes.
+      openrouter_key: ${{ secrets.OPENROUTER_API_KEY }}
       figma_token: ${{ secrets.FIGMA_TOKEN }}
 
   glimmer-samples:
