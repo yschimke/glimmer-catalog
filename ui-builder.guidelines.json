@@ -88,7 +88,7 @@
       "severity": "warning",
       "guidance": "Show only one primary piece of information at a time (for example, using a Stack). Avoid multiple simultaneous cards.",
       "check": "Is at most one card shown outside a Stack or List?",
-      "source": "kb://android/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
+      "source": "https://developer.android.com/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
     },
     {
       "id": "glasses.stack-vs-list",
@@ -96,7 +96,7 @@
       "severity": "info",
       "guidance": "If the items are of different types use a stack. If the items are of the same type, use a list. Don't use a title chip with a stack.",
       "check": "Do Lists hold items of one type and Stacks mixed types, with no TitleChip on a Stack? Answer not_applicable when there is neither.",
-      "source": "kb://android/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
+      "source": "https://developer.android.com/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
     },
     {
       "id": "glasses.list.sole-scroller",
@@ -112,7 +112,7 @@
       "severity": "warning",
       "guidance": "Never embed a card within a List Item.",
       "check": "Does no ListItem contain a Card? Answer not_applicable when there are no list items.",
-      "source": "kb://android/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
+      "source": "https://developer.android.com/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
     },
     {
       "id": "glasses.card.click-xor-nested",
@@ -120,7 +120,7 @@
       "severity": "warning",
       "guidance": "Leave onClick as null if the Card contains multiple internal interactive elements, to avoid focus contention.",
       "check": "Does every clickable Card contain no buttons of its own? Answer not_applicable when no card is clickable.",
-      "source": "kb://android/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
+      "source": "https://developer.android.com/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
     },
     {
       "id": "glasses.title-chip.short",
@@ -128,7 +128,7 @@
       "severity": "warning",
       "guidance": "Always center text in a title chip. Never let the title chip go to two lines. Keep the label to three words or less.",
       "check": "Is every TitleChip label three words or fewer, on one line? Answer not_applicable when there are no title chips.",
-      "source": "kb://android/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
+      "source": "https://developer.android.com/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
     },
     {
       "id": "glasses.icon.trigger-is-icon-button",
@@ -136,7 +136,7 @@
       "severity": "warning",
       "guidance": "If an icon serves as a trigger, then you must use an IconButton.",
       "check": "Does every tappable icon use an IconButton rather than a clickable Icon? Answer not_applicable when no icon is tappable.",
-      "source": "kb://android/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
+      "source": "https://developer.android.com/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
     },
     {
       "id": "glasses.icon.no-black-tint",
@@ -144,7 +144,7 @@
       "severity": "warning",
       "guidance": "NEVER use pure black (#000000) for icon tints.",
       "check": "Is no icon tinted #000000?",
-      "source": "kb://android/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
+      "source": "https://developer.android.com/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
     },
     {
       "id": "glasses.progress.honest",
@@ -168,7 +168,7 @@
       "severity": "info",
       "guidance": "Always use a consistent background color and corner radius for every item. Don't vary these unless you are visually grouping different types of content.",
       "check": "Do the items of each List share one background and shape? Answer not_applicable when there is no list.",
-      "source": "kb://android/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
+      "source": "https://developer.android.com/agents/skills/xr/display-glasses-with-jetpack-compose-glimmer/skill"
     }
   ]
 }
