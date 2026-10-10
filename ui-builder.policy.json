@@ -5,6 +5,11 @@
   "componentIdPrefix": "glimmer/",
   "platform": "glasses",
   "platformLabel": "Glasses",
+  "$comment_composeSourceExport": "Compose source export is record-driven: the builder's compose-material3 v1 adapter generates calls from THIS catalog's discovered component records, so its output is Glimmer (androidx.xr.glimmer.Card, Icon, ...) with no Material 3, despite the adapter's name. Icons resolve from iconKey to androidx.compose.material.icons, so a consumer needs material-icons-extended.",
+  "composeSourceExport": {
+    "adapter": "compose-material3",
+    "version": 1
+  },
   "previewSurfaces": {
     "wasm": {
       "fidelity": "authoritative",
