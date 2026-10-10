@@ -37,7 +37,7 @@
       "Voice input"
     ]
   },
-  "$comment_templates": "The New design chooser's starting points, as branch-relative paths the design-artifacts pipeline copies from ui-builder/designs/ onto the delivery branch beside ui-builder.json. Each is a 960×720dp glasses frame (frame.seedDevice) built from real Glimmer components on the builder's column, so a new design opens on the additive display's black rather than the generic phone scaffold. There is deliberately no composeSourceExport: compose-ui-builder ships no Glimmer emitter, and a declaration naming one it does not ship would make the host refuse the catalog's exports rather than offer none.",
+  "$comment_templates": "The New design chooser's starting points, as branch-relative paths the design-artifacts pipeline copies from ui-builder/designs/ onto the delivery branch beside ui-builder.json. Each is a 960×720dp glasses frame (frame.seedDevice) built from real Glimmer components on the builder's column, so a new design opens on the additive display's black rather than the generic phone scaffold.",
   "templates": [
     "ui-builder/designs/glasses-card.json",
     "ui-builder/designs/glasses-list.json",

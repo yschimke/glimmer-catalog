@@ -27,8 +27,11 @@ The policy's `templates` name the New design chooser's starting points, under
 [`ui-builder/designs/`](ui-builder/designs): `glasses-card`, `glasses-list` and `glasses-prompt`, each
 a 960×720dp glasses frame of real Glimmer components. A UI builder reads them once it serves this
 catalog as catalog-owned (`--ui-builder-catalog-ownership`, compose-ui-builder's
-`UI_BUILDER_CATALOG_CUTOVER.md`); until then it offers the generic phone blank. The catalog declares
-no `composeSourceExport`, because compose-ui-builder ships no Glimmer emitter yet.
+`UI_BUILDER_CATALOG_CUTOVER.md`); until then it offers the generic phone blank. The policy's
+`composeSourceExport` names the builder's record-driven `compose-material3` v1 adapter, which
+generates calls from this catalog's own component records, so exported source is Glimmer
+(`androidx.xr.glimmer.*`) despite the adapter's name; icons resolve to
+`androidx.compose.material.icons`, so a consumer needs `material-icons-extended`.
 
 ## Compose Multiplatform port
 
