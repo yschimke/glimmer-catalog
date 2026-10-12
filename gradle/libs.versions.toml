@@ -7,7 +7,7 @@ glimmer = "1.0.0-alpha20"
 androidx-compose-ui = "1.12.1"
 androidx-compose-material-icons = "1.7.8"
 compose-multiplatform = "1.12.0"
-androidx-annotation = "1.10.0"
+androidx-annotation = "1.11.0"
 composePreviewPlugin = "2.50.0"
 # The ONE version for every ee.schimke.composeai runtime module below: they are versionless and
 # resolve through ee.schimke.composeai:compose-preview-daemon-bom, applied as `platform(...)` in each
