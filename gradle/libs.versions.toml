@@ -1,7 +1,7 @@
 [versions]
 kotlin = "2.4.21"
 ktfmt = "0.27.0"
-agp = "9.4.1"
+agp = "9.5.1"
 robolectric = "4.17"
 glimmer = "1.0.0-alpha20"
 androidx-compose-ui = "1.12.1"
