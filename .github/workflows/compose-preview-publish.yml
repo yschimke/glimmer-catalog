@@ -35,7 +35,7 @@ jobs:
         # The handoff comes from the PR's run, so keep only digits before writing an output; the
         # apply action still checks the number against the workflow_run head.
         run: echo "number=$(tr -cd 0-9 < _compose_preview_handoff/_pr_number)" >> "$GITHUB_OUTPUT"
-      - uses: yschimke/compose-ai-tools/.github/actions/apply@557246a98f927c548af893e5fb9a28376581bf41 # v2.68.6
+      - uses: yschimke/compose-ai-tools/.github/actions/apply@8c14445545fe85635701fd3f52045c63680ca101 # v2.87.0
         with:
           phase: publish
           pr-number: ${{ steps.pr.outputs.number }}
