@@ -22,10 +22,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import ee.schimke.m3catalog.glimmersamples.GlimmerSamplePreview
 import androidx.xr.glimmer.GlimmerTheme
 import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.IconToggleButton
+import androidx.xr.glimmer.IconToggleButtonDefaults
 
 @Sampled
 @Composable
@@ -39,8 +41,38 @@ fun IconToggleButtonSample() {
     }
 }
 
+@Sampled
+@Composable
+fun CustomColorsIconToggleButtonSample() {
+    var checked by remember { mutableStateOf(false) }
+    val focusedBackgroundColor =
+        IconToggleButtonDefaults.focusedBackgroundColor(baseColor = Color(0xFFE3FF6F))
+    val checkedBackgroundColor =
+        IconToggleButtonDefaults.checkedBackgroundColor(baseColor = Color(0xFF34E0A1))
+    IconToggleButton(
+        checked = checked,
+        onCheckedChange = { checked = it },
+        colors =
+            IconToggleButtonDefaults.colors(
+                focusedBackgroundColor = focusedBackgroundColor,
+                checkedBackgroundColor = checkedBackgroundColor,
+            ),
+    ) {
+        Icon(
+            imageVector = if (checked) FavoriteIcon else OutlinedFavoriteIcon,
+            contentDescription = "Localized description",
+        )
+    }
+}
+
 @GlimmerSamplePreview
 @Composable
 private fun IconToggleButtonPreview() {
     GlimmerTheme { IconToggleButtonSample() }
+}
+
+@GlimmerSamplePreview
+@Composable
+private fun CustomColorsIconToggleButtonPreview() {
+    GlimmerTheme { CustomColorsIconToggleButtonSample() }
 }

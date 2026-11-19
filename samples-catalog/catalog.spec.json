@@ -124,6 +124,17 @@
               "componentId": "Button"
             }
           ]
+        },
+        {
+          "componentId": "Button/CustomFocusedColorButtonSample",
+          "preview": "CustomFocusedColorButtonPreview",
+          "caption": "`CustomFocusedColorButtonSample` — the sample upstream's own `@Preview` renders.",
+          "related": [
+            {
+              "system": "glimmer-catalog",
+              "componentId": "Button"
+            }
+          ]
         }
       ]
     },
@@ -216,6 +227,17 @@
           "componentId": "Card/CardWithTitleAndSubtitleAndLeadingIconAndTrailingIconLongText",
           "preview": "CardWithTitleAndSubtitleAndLeadingIconAndTrailingIconLongTextPreview",
           "caption": "`CardWithTitleAndSubtitleAndLeadingIconAndTrailingIconLongText` — the sample upstream's own `@Preview` renders.",
+          "related": [
+            {
+              "system": "glimmer-catalog",
+              "componentId": "ImageCard"
+            }
+          ]
+        },
+        {
+          "componentId": "Card/NonFocusableCardWithButtonGroupSample",
+          "preview": "NonFocusableCardWithButtonGroupPreview",
+          "caption": "`NonFocusableCardWithButtonGroupSample` — the sample upstream's own `@Preview` renders.",
           "related": [
             {
               "system": "glimmer-catalog",
@@ -466,6 +488,17 @@
           "componentId": "IconToggleButton/IconToggleButtonSample",
           "preview": "IconToggleButtonPreview",
           "caption": "`IconToggleButtonSample` — the sample upstream's own `@Preview` renders.",
+          "related": [
+            {
+              "system": "glimmer-catalog",
+              "componentId": "IconToggleButton"
+            }
+          ]
+        },
+        {
+          "componentId": "IconToggleButton/CustomColorsIconToggleButtonSample",
+          "preview": "CustomColorsIconToggleButtonPreview",
+          "caption": "`CustomColorsIconToggleButtonSample` — the sample upstream's own `@Preview` renders.",
           "related": [
             {
               "system": "glimmer-catalog",
@@ -729,6 +762,17 @@
           "componentId": "ToggleButton/ToggleButtonWithTrailingIconSample",
           "preview": "ToggleButtonWithTrailingIconPreview",
           "caption": "`ToggleButtonWithTrailingIconSample` — the sample upstream's own `@Preview` renders.",
+          "related": [
+            {
+              "system": "glimmer-catalog",
+              "componentId": "ToggleButton"
+            }
+          ]
+        },
+        {
+          "componentId": "ToggleButton/CustomColorsToggleButtonSample",
+          "preview": "CustomColorsToggleButtonPreview",
+          "caption": "`CustomColorsToggleButtonSample` — the sample upstream's own `@Preview` renders.",
           "related": [
             {
               "system": "glimmer-catalog",

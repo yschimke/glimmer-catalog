@@ -4,11 +4,11 @@
   "libraries": [
     {
       "name": "glimmer",
-      "ref": "429b81ad2ec8557d8d5ea67c07c4ce0e7b87be51",
+      "ref": "5f6f0db33b443805f9f79853c3e89dd34e2db9d8",
       "paths": [
         "xr/glimmer/glimmer/samples/src/main/java/androidx/xr/glimmer/samples"
       ],
-      "artifact": "androidx.xr.glimmer:glimmer:1.0.0-alpha20",
+      "artifact": "androidx.xr.glimmer:glimmer:1.0.0-alpha22",
       "files": 21
     }
   ],

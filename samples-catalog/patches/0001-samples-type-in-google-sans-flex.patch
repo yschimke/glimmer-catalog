@@ -45,19 +45,19 @@ index 806c601..1f33c64 100644
  private fun ButtonGroupPreview() {
      GlimmerTheme { ButtonGroupSample() }
 diff --git a/androidx/xr/glimmer/samples/ButtonSamples.kt b/androidx/xr/glimmer/samples/ButtonSamples.kt
-index 7726541..40d9253 100644
+index d29fda6..c8dcb44 100644
 --- a/androidx/xr/glimmer/samples/ButtonSamples.kt
 +++ b/androidx/xr/glimmer/samples/ButtonSamples.kt
-@@ -22,7 +22,7 @@ import androidx.compose.foundation.layout.wrapContentSize
- import androidx.compose.runtime.Composable
+@@ -23,7 +23,7 @@ import androidx.compose.runtime.Composable
  import androidx.compose.ui.Alignment
  import androidx.compose.ui.Modifier
+ import androidx.compose.ui.graphics.Color
 -import androidx.compose.ui.tooling.preview.Preview
 +import ee.schimke.m3catalog.glimmersamples.GlimmerSamplePreview
  import androidx.xr.glimmer.Button
+ import androidx.xr.glimmer.ButtonDefaults
  import androidx.xr.glimmer.ButtonSize
- import androidx.xr.glimmer.GlimmerTheme
-@@ -119,49 +119,49 @@ private fun LargeButtonWithLeadingAndTrailingIconSample() {
+@@ -133,55 +133,55 @@ fun CustomFocusedColorButtonSample() {
      }
  }
  
@@ -115,11 +115,18 @@ index 7726541..40d9253 100644
  @Composable
  private fun LargeButtonWithLeadingAndTrailingIconPreview() {
      GlimmerTheme { LargeButtonWithLeadingAndTrailingIconSample() }
+ }
+ 
+-@Preview
++@GlimmerSamplePreview
+ @Composable
+ private fun CustomFocusedColorButtonPreview() {
+     GlimmerTheme { CustomFocusedColorButtonSample() }
 diff --git a/androidx/xr/glimmer/samples/CardSamples.kt b/androidx/xr/glimmer/samples/CardSamples.kt
-index 375834b..328523a 100644
+index e9f1623..20a3dae 100644
 --- a/androidx/xr/glimmer/samples/CardSamples.kt
 +++ b/androidx/xr/glimmer/samples/CardSamples.kt
-@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.painter.BrushPainter
+@@ -31,7 +31,7 @@ import androidx.compose.ui.graphics.painter.BrushPainter
  import androidx.compose.ui.graphics.painter.Painter
  import androidx.compose.ui.layout.ContentScale
  import androidx.compose.ui.text.style.TextOverflow
@@ -127,8 +134,8 @@ index 375834b..328523a 100644
 +import ee.schimke.m3catalog.glimmersamples.GlimmerSamplePreview
  import androidx.xr.glimmer.ActionCard
  import androidx.xr.glimmer.Button
- import androidx.xr.glimmer.Card
-@@ -260,73 +260,73 @@ fun TrailingImageCardSample() {
+ import androidx.xr.glimmer.ButtonGroup
+@@ -281,79 +281,79 @@ fun TrailingImageCardSample() {
  // Previews
  // -------------------------------------------------------------------------------------------------
  
@@ -172,6 +179,13 @@ index 375834b..328523a 100644
  @Composable
  private fun CardWithTitleAndSubtitleAndLeadingIconAndTrailingIconLongTextPreview() {
      GlimmerTheme { CardWithTitleAndSubtitleAndLeadingIconAndTrailingIconLongText() }
+ }
+ 
+-@Preview
++@GlimmerSamplePreview
+ @Composable
+ private fun NonFocusableCardWithButtonGroupPreview() {
+     GlimmerTheme { NonFocusableCardWithButtonGroupSample() }
  }
  
 -@Preview
@@ -383,19 +397,19 @@ index 657e6ab..a39e164 100644
  private fun IconPreview() {
      GlimmerTheme { IconSampleUsage() }
 diff --git a/androidx/xr/glimmer/samples/IconToggleButtonSamples.kt b/androidx/xr/glimmer/samples/IconToggleButtonSamples.kt
-index ff140e8..d654612 100644
+index 7116aee..e9b646c 100644
 --- a/androidx/xr/glimmer/samples/IconToggleButtonSamples.kt
 +++ b/androidx/xr/glimmer/samples/IconToggleButtonSamples.kt
-@@ -22,7 +22,7 @@ import androidx.compose.runtime.getValue
- import androidx.compose.runtime.mutableStateOf
+@@ -23,7 +23,7 @@ import androidx.compose.runtime.mutableStateOf
  import androidx.compose.runtime.remember
  import androidx.compose.runtime.setValue
+ import androidx.compose.ui.graphics.Color
 -import androidx.compose.ui.tooling.preview.Preview
 +import ee.schimke.m3catalog.glimmersamples.GlimmerSamplePreview
  import androidx.xr.glimmer.GlimmerTheme
  import androidx.xr.glimmer.Icon
  import androidx.xr.glimmer.IconToggleButton
-@@ -39,7 +39,7 @@ fun IconToggleButtonSample() {
+@@ -65,13 +65,13 @@ fun CustomColorsIconToggleButtonSample() {
      }
  }
  
@@ -404,6 +418,13 @@ index ff140e8..d654612 100644
  @Composable
  private fun IconToggleButtonPreview() {
      GlimmerTheme { IconToggleButtonSample() }
+ }
+ 
+-@Preview
++@GlimmerSamplePreview
+ @Composable
+ private fun CustomColorsIconToggleButtonPreview() {
+     GlimmerTheme { CustomColorsIconToggleButtonSample() }
 diff --git a/androidx/xr/glimmer/samples/IndirectPointerGestureSamples.kt b/androidx/xr/glimmer/samples/IndirectPointerGestureSamples.kt
 index 2bc8a19..c455a7e 100644
 --- a/androidx/xr/glimmer/samples/IndirectPointerGestureSamples.kt
@@ -621,19 +642,19 @@ index 6f780e6..46e2e9d 100644
  private fun TitleChipWithCardPreview() {
      GlimmerTheme { TitleChipWithCardSample() }
 diff --git a/androidx/xr/glimmer/samples/ToggleButtonSamples.kt b/androidx/xr/glimmer/samples/ToggleButtonSamples.kt
-index 4205c36..8c1af98 100644
+index a799e96..c5923ff 100644
 --- a/androidx/xr/glimmer/samples/ToggleButtonSamples.kt
 +++ b/androidx/xr/glimmer/samples/ToggleButtonSamples.kt
-@@ -22,7 +22,7 @@ import androidx.compose.runtime.getValue
- import androidx.compose.runtime.mutableStateOf
+@@ -23,7 +23,7 @@ import androidx.compose.runtime.mutableStateOf
  import androidx.compose.runtime.remember
  import androidx.compose.runtime.setValue
+ import androidx.compose.ui.graphics.Color
 -import androidx.compose.ui.tooling.preview.Preview
 +import ee.schimke.m3catalog.glimmersamples.GlimmerSamplePreview
  import androidx.xr.glimmer.ButtonSize
  import androidx.xr.glimmer.GlimmerTheme
  import androidx.xr.glimmer.Icon
-@@ -83,25 +83,25 @@ fun ToggleButtonWithTrailingIconSample() {
+@@ -107,31 +107,31 @@ fun CustomColorsToggleButtonSample() {
      }
  }
  
@@ -663,6 +684,13 @@ index 4205c36..8c1af98 100644
  @Composable
  private fun ToggleButtonWithTrailingIconPreview() {
      GlimmerTheme { ToggleButtonWithTrailingIconSample() }
+ }
+ 
+-@Preview
++@GlimmerSamplePreview
+ @Composable
+ private fun CustomColorsToggleButtonPreview() {
+     GlimmerTheme { CustomColorsToggleButtonSample() }
 diff --git a/androidx/xr/glimmer/samples/TypographySamples.kt b/androidx/xr/glimmer/samples/TypographySamples.kt
 index 2598769..8f345ea 100644
 --- a/androidx/xr/glimmer/samples/TypographySamples.kt

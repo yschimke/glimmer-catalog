@@ -2,8 +2,8 @@
 kotlin = "2.4.21"
 ktfmt = "0.27.0"
 agp = "9.4.1"
-robolectric = "4.17"
-glimmer = "1.0.0-alpha20"
+robolectric = "4.18"
+glimmer = "1.0.0-alpha22"
 androidx-compose-ui = "1.12.1"
 androidx-compose-material-icons = "1.7.8"
 compose-multiplatform = "1.12.2"
@@ -19,7 +19,7 @@ composePreviewPlugin = "2.68.6"
 # newer BOM aligns both) but must not predate the daemon the plugin bakes in (plugin 2.45.0 bakes
 # daemon 3.15.2). :verifyComposePreviewDaemonAlignment (root build.gradle.kts) fails the build on an
 # older BOM. Renovate moves it with the compose-preview-daemon train.
-composePreviewDaemon = "3.18.8"
+composePreviewDaemon = "3.28.0"
 
 [libraries]
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
