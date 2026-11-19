@@ -4,13 +4,13 @@
   "libraries": [
     {
       "name": "glimmer",
-      "ref": "429b81ad2ec8557d8d5ea67c07c4ce0e7b87be51",
-      "refDescription": "androidx-main at the merge immediately before `Add focused color customization to Button` (cd72ecdb, merged as 79a2dcb0 on 2026-09-23, the day glimmer 1.0.0-alpha20 was published). Verified rather than estimated: every .kt file in the published glimmer-1.0.0-alpha20-sources.jar hashes identically (git hash-object) to xr/glimmer/glimmer/src/main/java at this commit, and the next glimmer change on main (cd72ecdb) is the first that diverges. The library tree is unchanged here since bec77af6 (`Remove SurfaceDefaults.color and IconMarkerDefaults.color functions`, 2026-09-16), so the samples are exactly the ones written against the shipped API.",
+      "ref": "5f6f0db33b443805f9f79853c3e89dd34e2db9d8",
+      "refDescription": "androidx-main on 2026-10-09 (`Introduce focused colors for ToggleButton`), matching glimmer 1.0.0-alpha22 (before `calculateFocusedColor` in 09ab114ee1). Includes non-focusable Card and focused colors for Button, IconToggleButton, and ToggleButton.",
       "paths": [
         "xr/glimmer/glimmer/samples/src/main/java/androidx/xr/glimmer/samples"
       ],
       "artifactCoordinates": "androidx.xr.glimmer:glimmer",
-      "artifactVersion": "1.0.0-alpha20"
+      "artifactVersion": "1.0.0-alpha22"
     }
   ]
 }
