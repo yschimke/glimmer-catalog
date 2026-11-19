@@ -4,8 +4,8 @@
   "libraries": [
     {
       "name": "glimmer",
-      "ref": "09ab114ee1f61de19e3dfce87fd07c45c5642280",
-      "refDescription": "androidx-main on 2026-10-16 (`Replace SurfaceDefaults.focusedColor with calculateFocusedColor`), matching glimmer 1.0.0-alpha22 (published 2026-10-21). Includes non-focusable Card and focused colors for Button, IconToggleButton, ToggleButton, and Surface.",
+      "ref": "5f6f0db33b443805f9f79853c3e89dd34e2db9d8",
+      "refDescription": "androidx-main on 2026-10-09 (`Introduce focused colors for ToggleButton`), matching glimmer 1.0.0-alpha22 (before `calculateFocusedColor` in 09ab114ee1). Includes non-focusable Card and focused colors for Button, IconToggleButton, and ToggleButton.",
       "paths": [
         "xr/glimmer/glimmer/samples/src/main/java/androidx/xr/glimmer/samples"
       ],

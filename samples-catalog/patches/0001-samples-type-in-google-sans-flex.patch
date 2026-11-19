@@ -570,7 +570,7 @@ index 70a5952..7774aa1 100644
  private fun VerticalStackPreview() {
      GlimmerTheme { VerticalStackSample() }
 diff --git a/androidx/xr/glimmer/samples/SurfaceSamples.kt b/androidx/xr/glimmer/samples/SurfaceSamples.kt
-index 07b4522..6780e4f 100644
+index 5fd77e7..85db473 100644
 --- a/androidx/xr/glimmer/samples/SurfaceSamples.kt
 +++ b/androidx/xr/glimmer/samples/SurfaceSamples.kt
 @@ -26,7 +26,7 @@ import androidx.compose.runtime.Composable
