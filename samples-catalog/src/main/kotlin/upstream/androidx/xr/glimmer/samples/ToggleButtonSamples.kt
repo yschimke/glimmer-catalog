@@ -22,12 +22,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import ee.schimke.m3catalog.glimmersamples.GlimmerSamplePreview
 import androidx.xr.glimmer.ButtonSize
 import androidx.xr.glimmer.GlimmerTheme
 import androidx.xr.glimmer.Icon
 import androidx.xr.glimmer.Text
 import androidx.xr.glimmer.ToggleButton
+import androidx.xr.glimmer.ToggleButtonDefaults
 
 @Sampled
 @Composable
@@ -83,6 +85,28 @@ fun ToggleButtonWithTrailingIconSample() {
     }
 }
 
+@Sampled
+@Composable
+fun CustomColorsToggleButtonSample() {
+    var checked by remember { mutableStateOf(false) }
+    val text = if (checked) "Toggle on" else "Toggle off"
+    val focusedBackgroundColor =
+        ToggleButtonDefaults.focusedBackgroundColor(baseColor = Color(0xFFE3FF6F))
+    val checkedBackgroundColor =
+        ToggleButtonDefaults.checkedBackgroundColor(baseColor = Color(0xFF34E0A1))
+    ToggleButton(
+        checked = checked,
+        onCheckedChange = { checked = it },
+        colors =
+            ToggleButtonDefaults.colors(
+                focusedBackgroundColor = focusedBackgroundColor,
+                checkedBackgroundColor = checkedBackgroundColor,
+            ),
+    ) {
+        Text(text)
+    }
+}
+
 @GlimmerSamplePreview
 @Composable
 private fun ToggleButtonPreview() {
@@ -105,4 +129,10 @@ private fun ToggleButtonWithLeadingIconPreview() {
 @Composable
 private fun ToggleButtonWithTrailingIconPreview() {
     GlimmerTheme { ToggleButtonWithTrailingIconSample() }
+}
+
+@GlimmerSamplePreview
+@Composable
+private fun CustomColorsToggleButtonPreview() {
+    GlimmerTheme { CustomColorsToggleButtonSample() }
 }

@@ -29,7 +29,7 @@
   "library": {
     "coordinate": "androidx.xr.glimmer:glimmer",
     "versionRef": "glimmer",
-    "version": "1.0.0-alpha20",
+    "version": "1.0.0-alpha22",
     "$comment": [
       "The API surface every `api-gap` below was read from. `version` must equal the",
       "`glimmer` entry in gradle/libs.versions.toml; Renovate owns that pin, so the day it",
