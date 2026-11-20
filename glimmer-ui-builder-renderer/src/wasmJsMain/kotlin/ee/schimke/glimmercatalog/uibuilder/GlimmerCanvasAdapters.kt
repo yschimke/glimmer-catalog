@@ -218,7 +218,7 @@ private fun ee.schimke.composeai.uibuilder.renderer.sdk.CanvasNodeScope.buttonSi
 
 @androidx.compose.runtime.Composable
 private fun ee.schimke.composeai.uibuilder.renderer.sdk.CanvasNodeScope.optionalSlot(
-  name: String
+  name: String,
 ): (@androidx.compose.runtime.Composable () -> Unit)? {
   if (itemCount(name) == 0) return null
   return { Slot(name) }

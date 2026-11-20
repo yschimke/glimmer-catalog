@@ -159,7 +159,7 @@ fun TitleChipSticker() = Sticker {
   // The kit's symbol draws its entity slot filled and labels it "Title Chip" (146x44); the
   // label-only chip is 107x44 and is the variant below.
   TitleChip(
-    leadingIcon = { Icon(Icons.Rounded.AccountCircle, stringResource(R.string.cd_sender)) }
+    leadingIcon = { Icon(Icons.Rounded.AccountCircle, stringResource(R.string.cd_sender)) },
   ) {
     Text(glimmerText("label", stringResource(R.string.label_title_chip)))
   }
