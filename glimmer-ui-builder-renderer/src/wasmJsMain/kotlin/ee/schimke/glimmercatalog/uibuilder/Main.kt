@@ -100,7 +100,7 @@ private fun start(
       GlimmerTheme(typography = Typography(defaultFontFamily = family)) {
         Box(
           Modifier.requiredSize(surface.widthDp.dp, surface.heightDp.dp)
-            .background(GlimmerTheme.colors.background)
+            .background(GlimmerTheme.colors.background),
         ) {
           CanvasDocumentHost(
             document = document,

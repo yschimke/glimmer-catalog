@@ -113,7 +113,7 @@ class GlimmerTranslationsTest {
   private val sameAsEnglishAllowedPerLocale =
     mapOf(
       // "Microphone" is the French word too. Every other locale translates it.
-      "values-fr" to setOf("cd_microphone")
+      "values-fr" to setOf("cd_microphone"),
     )
 
   @Test
@@ -172,7 +172,7 @@ class GlimmerTranslationsTest {
       Regex(
         """(?:\b(?:Text|BasicText)\s*\(\s*(?:text\s*=\s*)?|""" +
           """\bcontentDescription\s*=\s*|""" +
-          """\b(?:Icon|Image)\s*\(\s*[^,()"]{1,80}(?:\([^()]*\))?\s*,\s*)"((?:\\.|[^"\\])*)""""
+          """\b(?:Icon|Image)\s*\(\s*[^,()"]{1,80}(?:\([^()]*\))?\s*,\s*)"((?:\\.|[^"\\])*)"""",
       )
     val found =
       sourceRoot

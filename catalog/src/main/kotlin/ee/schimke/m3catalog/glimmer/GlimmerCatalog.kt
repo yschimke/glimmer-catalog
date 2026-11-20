@@ -148,5 +148,5 @@ val HeaderImage: Painter =
       1.0f to Color(0xFFE763F9),
       start = Offset.Zero,
       end = Offset(HEADER_INTRINSIC, HEADER_INTRINSIC),
-    )
+    ),
   )
